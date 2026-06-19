@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>日本中部旅行日記</title>
+    <style>
+        :root {
+            --bg-color: #f2ede4;
+            --paper-color: #fffcf5;
+            --text-main: #3e3832;
+            --text-light: #7a7065;
+            --accent: #c08b6d;
+            --line-color: #e3dec9;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'PingFang TC', 'Heiti TC', 'Microsoft JhengHei', serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden; /* Prevent vertical scroll on body */
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Navigation Hint */
+        .swipe-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(62, 56, 50, 0.7);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            z-index: 100;
+            pointer-events: none;
+            animation: fadeOut 4s forwards;
+            animation-delay: 3s;
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* Container for horizontal scrolling */
+        .diary-container {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            height: 100vh;
+            width: 100vw;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+            scrollbar-width: none; /* Firefox */
+        }
+        .diary-container::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        /* Individual Page */
+        .page-wrapper {
+            flex: 0 0 100vw;
+            width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
+            padding: 15px 10px 30px 10px;
+            box-sizing: border-box;
+            overflow-y: auto; /* Allow vertical scroll within page */
+        }
+
+        .paper {
+            background-color: var(--paper-color);
+            min-height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            padding: 25px 20px;
+            box-sizing: border-box;
+            position: relative;
+            background-image: 
+                linear-gradient(transparent 95%, var(--line-color) 95%);
+            background-size: 100% 30px;
+            line-height: 30px;
+        }
+
+        /* Binder rings effect */
+        .paper::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 20px;
+            bottom: 20px;
+            width: 2px;
+            background: rgba(192, 139, 109, 0.3);
+            border-left: 1px solid rgba(192, 139, 109, 0.5);
+        }
+
+        /* Header / Date */
+        .date-header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            background: var(--paper-color);
+            padding-bottom: 10px;
+        }
+        .date-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--accent);
+            margin: 0;
+            line-height: 1.4;
+        }
+        .hotel-info {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+            background: #f7f3eb;
+            padding: 8px;
+            border-radius: 6px;
+            line-height: 1.5;
+            display: inline-block;
+            text-align: left;
+            max-width: 100%;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 20px;
+            margin-top: 15px;
+            background: var(--paper-color);
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 5px;
+            bottom: 0;
+            width: 2px;
+            background: var(--line-color);
+        }
+
+        .event {
+            position: relative;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        .event::before {
+            content: '';
+            position: absolute;
+            left: -21px;
+            top: 6px;
+            width: 10px;
+            height: 10px;
+            background: var(--paper-color);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .time-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+        .time {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 14px;
+            margin-right: 10px;
+        }
+        .tag {
+            background: #e9e3d5;
+            color: var(--text-main);
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 8px;
+        }
+        .dest {
+            font-weight: bold;
+            font-size: 15px;
+        }
+        
+        .detail-box {
+            font-size: 13px;
+            color: var(--text-light);
+            background: rgba(255,255,255,0.6);
+            padding: 8px 10px;
+            border-radius: 6px;
+            margin-top: 5px;
+            white-space: pre-line;
+            line-height: 1.5;
+            border: 1px solid var(--line-color);
+        }
+        .transport {
+            font-size: 11px;
+            color: #928b7f;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+        }
+        .transport::before {
+            content: '🚶/🚗';
+            margin-right: 5px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="swipe-hint">左右橫掃以切換日子 ↔️</div>
+
+    <div class="diary-container">
+
+        <div class="page-wrapper">
+            <div class="paper">
+                <div class="date-header">
+                    <h1 class="date-title">6月23日 <br>(週二)
+Day 1</h1>
+
+                    <div class="hotel-info">🏨 三交旅館-名古屋新幹線口<br>(三交イン名古屋新幹線口)<br>[共2間房: 雙人房x1 + 單人房x1 | 共4人] (〒453-0015 愛知県名古屋市中村区椿町7-23<br>Tel: +81-52-4533511)</div>
+
+                </div>
+                <div class="timeline">
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">12:30 — 14:50</span>
+                            <span class='tag'>手續</span>
+                            <span class="dest">香港國際機場</span>
+                        </div>
+                        <div class='detail-box'>辦理登機</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">14:50-19:50</span>
+                            <span class='tag'>離境及抵達</span>
+                            <span class="dest">中部國際機場</span>
+                        </div>
+                        <div class='detail-box'>香港國際機場->中部國際機場</div>
+                        <div class='transport'>飛行時間 約 4 小時</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">20:47 — 21:15</span>
+                            <span class='tag'>乘名鐵</span>
+                            <span class="dest">名鐵名古屋站</span>
+                        </div>
+                        <div class='detail-box'>中部國際機場站->名鐵名古屋站<br>[車費: 1,340円 (含μ-ticket)]</div>
+                        <div class='transport'>鐵路車程 28 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">21:30</span>
+                            <span class='tag'>晚餐</span>
+                            <span class="dest">三交旅館-名古屋新幹線口</span>
+                        </div>
+                        <div class='detail-box'>世界之山將雞翅宵夜<br>目標:辦理飯店入住並外帶名物雞翅回房當特色晚餐</div>
+                        <div class='transport'>步行約 5 分鐘</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="paper">
+                <div class="date-header">
+                    <h1 class="date-title">6月24日 <br>(週三)
+Day 2</h1>
+
+                </div>
+                <div class="timeline">
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">09:30 — 10:30</span>
+                            <span class='tag'>早餐</span>
+                            <span class="dest">Tsubame Bread and Milk</span>
+                        </div>
+                        <div class='detail-box'>Tsubame Bread and Milk<br></div>
+                        <div class='transport'>步行 5 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">11:00 — 13:00</span>
+                            <span class='tag'>購物</span>
+                            <span class="dest">JR 高島屋 & Midland Square</span>
+                        </div>
+                        <div class='detail-box'>高島屋 & Midland Square<br>目標:掃貨Louis Vuitton、Dior等一線Luxury頂級獨立精品旗艦店</div>
+                        <div class='transport'>步行 5 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">13:00 — 14:30</span>
+                            <span class='tag'>午餐</span>
+                            <span class="dest"></span>
+                        </div>
+                        
+                        <div class='transport'>步行 2 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">14:30 — 16:00</span>
+                            <span class='tag'>購物</span>
+                            <span class="dest">JR 高島屋百貨</span>
+                        </div>
+                        <div class='detail-box'>高島屋百貨部門<br>目標:專櫃化妝品、潮流服飾與伴手禮大掃貨</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">16:00 — 16:05</span>
+                            <span class='tag'>乘地鐵</span>
+                            <span class="dest">榮站</span>
+                        </div>
+                        <div class='detail-box'>名古屋站->榮站 [車費: 210円]</div>
+                        <div class='transport'>地鐵車程 5 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">16:05 — 19:00</span>
+                            <span class='tag'>購物</span>
+                            <span class="dest">榮商圈 (PARCO & 松坂屋)</span>
+                        </div>
+                        <div class='detail-box'>榮商圈戰區<br>目標:美妝連鎖藥妝補貨，並朝聖PARCO全新搬遷之寶可夢中心(Pokemon Center)買限定商品</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">19:00 — 20:30</span>
+                            <span class='tag'>晚餐</span>
+                            <span class="dest">蓬萊軒鰻魚飯 (松坂屋店)</span>
+                        </div>
+                        <div class='detail-box'>蓬萊軒鰻魚飯三吃<br>目標:品嚐名古屋最正宗代表性老字號鰻魚飯 (17:30逛街途中記得先去登記取號碼牌)</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="paper">
+                <div class="date-header">
+                    <h1 class="date-title">6月25日 <br>(週四)
+Day 3</h1>
+
+                    <div class="hotel-info">🏨 飛驒高山酒店 Ascend Hotel Collection<br>(Hotel Around Takayama)<br>[共2間房: 雙床房x1 + 大床房x1 | 共3人] (〒506-0009 岐阜県高山市花岡町1丁目42-7<br>Tel: +81-577-362811)</div>
+
+                </div>
+                <div class="timeline">
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">08:30 — 09:30</span>
+                            <span class='tag'>早餐</span>
+                            <span class="dest">Cafe Gentiane (名古屋站)</span>
+                        </div>
+                        <div class='detail-box'>Cafe Gentiane 專賣店<br>目標:品嚐名古屋超人氣小雞蛋糕『Piyorin』特製萌系療癒早餐</div>
+                        <div class='transport'>步行 5 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">09:30 — 10:00</span>
+                            <span class='tag'>手續</span>
+                            <span class="dest">名古屋車站新幹線口</span>
+                        </div>
+                        <div class='detail-box'>租車手續</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">10:00 — 10:45</span>
+                            <span class='tag'>駕駛</span>
+                            <span class="dest">岐阜</span>
+                        </div>
+                        <div class='detail-box'>名古屋->岐阜<br>[公里: 約40km, 隧道費: 約1,200円]</div>
+                        <div class='transport'>自駕車程 45 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">10:45 — 12:30</span>
+                            <span class='tag'>觀光</span>
+                            <span class="dest">岐阜城</span>
+                        </div>
+                        <div class='detail-box'>金華山纜車與岐阜城<br>目標:搭纜車登頂天守閣，360度俯瞰織田信長當年天下布武絕景與拍照</div>
+                        <div class='transport'>步行 + 纜車</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">12:30 — 13:30</span>
+                            <span class='tag'>午餐</span>
+                            <span class="dest">岐阜城山下餐廳</span>
+                        </div>
+                        <div class='detail-box'>山下在地料理<br>目標:享用岐阜特產手工飛驒蕎麥麵或鹽烤香魚定食午餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">13:30 — 15:30</span>
+                            <span class='tag'>駕駛</span>
+                            <span class="dest">高山</span>
+                        </div>
+                        <div class='detail-box'>岐阜->高山<br>[公里: 約110km, 隧道費: 約3,100円 (行駛東海北陸自動車道)]</div>
+                        <div class='transport'>自駕車程 2 小時</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">15:30 — 16:00</span>
+                            <span class='tag'>休息</span>
+                            <span class="dest">飛驒高山酒店</span>
+                        </div>
+                        <div class='detail-box'>飯店辦理入住<br>目標:辦理Check-in、放下大件行李與短暫整頓回血</div>
+                        <div class='transport'>車程約 5 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">16:00 — 18:00</span>
+                            <span class='tag'>步行/觀光</span>
+                            <span class="dest">高山古街</span>
+                        </div>
+                        <div class='detail-box'>高山老街散策<br>目標:漫步古色古香江戶風情街道，拍出極致溫柔感照片 (小店多於17:00準時打烊)</div>
+                        <div class='transport'>步行約 15 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">18:30 — 20:00</span>
+                            <span class='tag'>晚餐</span>
+                            <span class="dest">味蔵天國 或 丸明</span>
+                        </div>
+                        <div class='detail-box'>頂級飛驒牛燒肉<br>目標:大快朵頤全日本頂尖、油花分布完美的頂級飛驒牛燒肉晚餐大餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="paper">
+                <div class="date-header">
+                    <h1 class="date-title">6月26日 <br>(週五)
+Day 4</h1>
+
+                </div>
+                <div class="timeline">
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">08:30 — 10:00</span>
+                            <span class='tag'>早餐</span>
+                            <span class="dest">宮川朝市</span>
+                        </div>
+                        <div class='detail-box'>宮川朝市晨間漫步<br>目標:品嚐人氣火烤飛驒牛握壽司、手燒仙貝與在地濃郁新鮮牛奶當特色早餐</div>
+                        <div class='transport'>步行約 15 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">10:00 — 11:15</span>
+                            <span class='tag'>駕駛</span>
+                            <span class="dest">新穗高</span>
+                        </div>
+                        <div class='detail-box'>高山->新穗高<br>[公里: 約50km, 隧道費: 0円 (沿途欣賞壯麗飛驒山脈風光)]</div>
+                        <div class='transport'>自駕車程 1 小時 15 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">11:15 — 12:30</span>
+                            <span class='tag'>觀光</span>
+                            <span class="dest">新穗高展望台</span>
+                        </div>
+                        <div class='detail-box'>新穗高雙層纜車<br>目標:搭乘日本唯一雙層纜車衝上標高2,156公尺展望台，飽覽北阿爾卑斯山連峰大絕景</div>
+                        <div class='transport'>雙層纜車</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">12:30 — 13:15</span>
+                            <span class='tag'>午餐</span>
+                            <span class="dest">新穗高西穗高口站餐廳</span>
+                        </div>
+                        <div class='detail-box'>西穗高高空餐廳<br>目標:在高山雪景瞭望台旁享用熱騰騰的高山拉麵或飛驒牛咖哩飯午餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">13:15 — 14:30</span>
+                            <span class='tag'>駕駛</span>
+                            <span class="dest">高山</span>
+                        </div>
+                        <div class='detail-box'>新穗高->高山<br>[公里: 約50km, 隧道費: 0円]</div>
+                        <div class='transport'>自駕車程 1 小時 15 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">14:30 — 17:00</span>
+                            <span class='tag'>休息</span>
+                            <span class="dest">飛驒高山酒店</span>
+                        </div>
+                        <div class='detail-box'>午睡<br>目標:好好睡個飽，強效補充自駕遊精神與體力</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">17:00 — 18:00</span>
+                            <span class='tag'>觀光</span>
+                            <span class="dest">高山老街船坂酒造店</span>
+                        </div>
+                        <div class='detail-box'>船坂酒造店老店體驗<br>目標:午睡清醒後散步，體驗趣味100円自助投幣藏元清酒試飲，微醺放鬆</div>
+                        <div class='transport'>步行 10 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">18:30 — 20:00</span>
+                            <span class='tag'>晚餐</span>
+                            <span class="dest">高山市區鄉土料理</span>
+                        </div>
+                        <div class='detail-box'>在地鄉土料理<br>目標:找尋在地小店享用飛驒傳統『朴葉味噌燒』牛排風味晚餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="paper">
+                <div class="date-header">
+                    <h1 class="date-title">6月27日 <br>(週六)
+Day 5</h1>
+
+                    <div class="hotel-info">🏨 阿曼尼克金澤酒店<br>(Hotel Amanek Kanazawa)<br>[共2間房: 高級雙床房x1 + 高級雙人房x1 | 共2人] (〒920-0981 石川県金沢市片町2丁目25-17<br>Tel: +81-76-2240700)</div>
+
+                </div>
+                <div class="timeline">
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">08:30 — 09:30</span>
+                            <span class='tag'>早餐</span>
+                            <span class="dest">飛驒高山酒店內</span>
+                        </div>
+                        <div class='detail-box'>飯店精緻早餐<br>目標:享用酒店大廚採用在地飛驒新鮮農產與野菜烹調的優雅朝食</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">10:00</span>
+                            <span class='tag'>手續</span>
+                            <span class="dest">飛驒高山酒店</span>
+                        </div>
+                        <div class='detail-box'>飯店退房辦理<br>目標:完成辦理Check-out並準備出發自駕</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">10:00 — 10:50</span>
+                            <span class='tag'>駕駛</span>
+                            <span class="dest">白川鄉</span>
+                        </div>
+                        <div class='detail-box'>高山->白川鄉<br>[公里: 約50km, 隧道費: 約1,300円]</div>
+                        <div class='transport'>自駕車程 50 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">10:50 — 12:30</span>
+                            <span class='tag'>步行/觀光</span>
+                            <span class="dest">白川鄉天守閣展望台</span>
+                        </div>
+                        <div class='detail-box'>世界遺產合掌村<br>目標:漫步薑餅屋村落，並登上天守閣展望台拍下明信片等級的合掌村全景網美照</div>
+                        <div class='transport'>步行 / 接駁車</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">12:30 — 13:30</span>
+                            <span class='tag'>午餐</span>
+                            <span class="dest">白川鄉圍爐裏老屋餐廳</span>
+                        </div>
+                        <div class='detail-box'>喫茶落人(或合掌定食)<br>目標:在歷史古董圍爐裏旁喝熱紅豆湯，享用懷舊日式咖哩定食午餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">13:30 — 14:45</span>
+                            <span class='tag'>駕駛</span>
+                            <span class="dest">金澤</span>
+                        </div>
+                        <div class='detail-box'>白川鄉->金澤<br>[公里: 約75km, 隧道費: 約2,200円]</div>
+                        <div class='transport'>自駕車程 1 小時 15 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">14:45 — 17:00</span>
+                            <span class='tag'>步行/觀光</span>
+                            <span class="dest">兼六園 & 金澤城</span>
+                        </div>
+                        <div class='detail-box'>日本三大名園兼六園<br>目標:深度遊覽古典江戶大名庭園、徽軫石燈籠，散步至金澤城外圍拍氣勢古風照</div>
+                        <div class='transport'>車程約 10 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">17:00 — 18:00</span>
+                            <span class='tag'>休息/手續</span>
+                            <span class="dest">阿曼尼克金澤酒店</span>
+                        </div>
+                        <div class='detail-box'>飯店辦理入住<br>目標:完成辦理Check-in、放下大件行李與自駕車輛、短暫小歇回血</div>
+                        <div class='transport'>車程約 10 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">18:30 — 20:00</span>
+                            <span class='tag'>晚餐</span>
+                            <span class="dest">近江町市場餐廳</span>
+                        </div>
+                        <div class='detail-box'>近江町海鮮饗宴<br>目標:在金澤人的廚房大快朵頤滿出來的極奢痛風海鮮丼與北陸高檔海鮮晚餐</div>
+                        <div class='transport'>車程/步行約 15 分鐘</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="paper">
+                <div class="date-header">
+                    <h1 class="date-title">6月28日 <br>(週日)
+Day 6</h1>
+
+                    <div class="hotel-info">🏨 相鐵 FRESA INN 名古屋站新幹線口 (愛知県名古屋市中村区椿町19-16)</div>
+
+                </div>
+                <div class="timeline">
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">08:30 — 09:30</span>
+                            <span class='tag'>早餐</span>
+                            <span class="dest">近江町市場「いきいき亭」</span>
+                        </div>
+                        <div class='detail-box'>いきいき亭特選朝食<br>目標:起個大早排隊，享用全金澤最新鮮奢華的特選海鮮丼冠軍早餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">09:30 — 11:00</span>
+                            <span class='tag'>步行/觀光</span>
+                            <span class="dest">東茶屋街</span>
+                        </div>
+                        <div class='detail-box'>東茶屋街金箔散策<br>目標:清晨無遊客時段拍攝極致木造老街網美照，並朝聖『箔一』品嚐奢華奢麗的金箔霜淇淋</div>
+                        <div class='transport'>車程約 10 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">11:00</span>
+                            <span class='tag'>手續</span>
+                            <span class="dest">阿曼尼克金澤酒店</span>
+                        </div>
+                        <div class='detail-box'>飯店辦理退房<br>目標:辦理Check-out手續、提領行李與車輛準備返程</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">11:00 — 12:30</span>
+                            <span class='tag'>午餐</span>
+                            <span class="dest">金澤車站百番街壽司店</span>
+                        </div>
+                        <div class='detail-box'>北陸限定迴轉壽司<br>目標:離境前朝聖金澤車站出名的優質壽司，必點海中紅寶石『黑喉魚』與富山白蝦午餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">12:30 — 16:30</span>
+                            <span class='tag'>駕駛</span>
+                            <span class="dest">蛭野高原</span>
+                        </div>
+                        <div class='detail-box'>金澤->名古屋 [公里: 約250km, 隧道費: 約5,800円]<br>中途停靠日本最高『蛭野高原 SA』吃牧場直送鮮乳霜淇淋，預防週日收假塞車提前出發</div>
+                        <div class='transport'>長途自駕約 4 小時 (含休息)</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">16:30 — 17:00</span>
+                            <span class='tag'>手續</span>
+                            <span class="dest">名古屋車站新幹線口</span>
+                        </div>
+                        <div class='detail-box'>租車營業所還車<br>目標:車輛加滿油、當場結清ETC過路費並辦妥還車手續</div>
+                        <div class='transport'>車程約 15 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">17:15</span>
+                            <span class='tag'>休息</span>
+                            <span class="dest">相鐵 FRESA INN</span>
+                        </div>
+                        <div class='detail-box'>新飯店辦理入住<br>目標:步行至新飯店放行李，洗臉稍作歇息</div>
+                        <div class='transport'>步行 5 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">18:30 — 20:00</span>
+                            <span class='tag'>晚餐</span>
+                            <span class="dest">矢場 Ton 味噌豬排 (名站店)</span>
+                        </div>
+                        <div class='detail-box'>矢場Ton味噌豬排 目標:朝聖名古屋名物靈魂鐵板味噌豬排，大口吃肉舉辦完賽自駕慶功宴晚餐</div>
+                        <div class='transport'>步行/地鐵約 15 分鐘</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="page-wrapper">
+            <div class="paper">
+                <div class="date-header">
+                    <h1 class="date-title">6月29日 <br>(週一)
+Day 7</h1>
+
+                    <div class="hotel-info">🏨 - (-)</div>
+
+                </div>
+                <div class="timeline">
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">08:00 — 09:00</span>
+                            <span class='tag'>早餐</span>
+                            <span class="dest">名古屋站地下街加藤珈琲店</span>
+                        </div>
+                        <div class='detail-box'>加藤珈琲店老鋪朝食<br>目標:名古屋老字號高評價自家烘焙珈琲店，享用濃郁黑咖啡與經典紅豆厚吐司早餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">09:00</span>
+                            <span class='tag'>手續</span>
+                            <span class="dest">相鐵 FRESA INN</span>
+                        </div>
+                        <div class='detail-box'>飯店退房寄物<br>目標:辦理Check-out，將大件登機行李免費寄存於飯店櫃檯</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">09:24 — 09:51</span>
+                            <span class='tag'>乘名鐵</span>
+                            <span class="dest">犬山站</span>
+                        </div>
+                        <div class='detail-box'>名鐵名古屋站->犬山站<br>[車費: 570円 (搭乘名鐵犬山線特急)]</div>
+                        <div class='transport'>鐵路車程 27 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">10:00 — 13:00</span>
+                            <span class='tag'>步行/觀光</span>
+                            <span class="dest">犬山城下町</span>
+                        </div>
+                        <div class='detail-box'>國寶犬山城 & 三光稻荷神社<br>目標:登上現存最古老木造天守閣遠眺，並在神社拍攝著名的粉紅愛心繪馬牆網美照</div>
+                        <div class='transport'>步行 10 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">13:00 — 14:00</span>
+                            <span class='tag'>午餐</span>
+                            <span class="dest">犬山城下町老街老鋪</span>
+                        </div>
+                        <div class='detail-box'>城下町老街串物午餐<br>目標:體驗江戶老街邊走邊吃，必買超萌彩虹『戀小町丸子』與香噴噴飛驒牛串燒點心午餐</div>
+                        <div class='transport'>步行</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">14:35 — 15:05</span>
+                            <span class='tag'>乘名鐵</span>
+                            <span class="dest">名鐵名古屋站</span>
+                        </div>
+                        <div class='detail-box'>犬山站->名鐵名古屋站<br>[車費: 570円]</div>
+                        <div class='transport'>鐵路車程 30 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">15:05 — 16:30</span>
+                            <span class='tag'>休息/手續</span>
+                            <span class="dest">相鐵 FRESA INN</span>
+                        </div>
+                        <div class='detail-box'>取回行李<br>目標:回飯店領取寄存大行李，利用大廳空間重新整理所有戰利品與手提行李</div>
+                        <div class='transport'>步行 5 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">17:01 — 17:29</span>
+                            <span class='tag'>乘名鐵機場特急</span>
+                            <span class="dest">中部國際機場站</span>
+                        </div>
+                        <div class='detail-box'>名鐵名古屋站->中部國際機場站<br>[車費: 1,340円 (搭乘名鐵機場特急 μ-SKY)]</div>
+                        <div class='transport'>鐵路車程 28 分鐘</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">17:30 — 18:30</span>
+                            <span class='tag'>手續</span>
+                            <span class="dest">中部國際機場</span>
+                        </div>
+                        <div class='detail-box'>辦理出境</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">18:30 — 19:30</span>
+                            <span class='tag'>晚餐</span>
+                            <span class="dest">山本屋總本家 (機場店)</span>
+                        </div>
+                        <div class='detail-box'>山本屋總本家味噌煮烏龍麵<br>目標:離境前最後巡禮名古屋靈魂名物，濃郁手工砂鍋味噌煮烏龍麵，全身暖和晚餐</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">19:30 — 20:45</span>
+                            <span class='tag'>購物</span>
+                            <span class="dest">中部國際機場免稅店</span>
+                        </div>
+                        <div class='detail-box'>機場免稅店大掃貨<br>目標:在登機門前免稅店進行日本各地精緻土產、名物蝦餅與赤福的最後大補貨</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                    <div class="event">
+                        <div class="time-row">
+                            <span class="time">20:45</span>
+                            <span class='tag'>離境及抵達</span>
+                            <span class="dest">香港國際機場</span>
+                        </div>
+                        <div class='detail-box'>中部國際機場->香港國際機場</div>
+                        <div class='transport'>-</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <script>
+        // Optional: Add simple JS to ensure snapping aligns perfectly on resize
+        let container = document.querySelector('.diary-container');
+        window.addEventListener('resize', () => {
+            let scrollPos = Math.round(container.scrollLeft / window.innerWidth) * window.innerWidth;
+            container.scrollTo({left: scrollPos, behavior: 'smooth'});
+        });
+    </script>
+</body>
+</html>
