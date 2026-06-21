@@ -779,6 +779,42 @@
     input:focus, textarea:focus, select:focus { border-color: rgba(255,55,95,.62); box-shadow: 0 0 0 4px rgba(255,55,95,.12); }
     .form-actions { display: flex; gap: 9px; margin-top: 16px; }
     .form-actions .pill-btn { flex: 1; min-height: 48px; }
+    .pill-btn.danger, .event-delete-form-btn {
+      color: #fff;
+      background: linear-gradient(135deg, #ff3b30, #ff7a59);
+      border-color: transparent;
+      box-shadow: 0 12px 30px rgba(255,59,48,.22);
+    }
+    .event-form-actions .event-delete-form-btn[hidden] { display: none; }
+    .trip-history-list { display: grid; gap: 10px; text-align: left; }
+    .trip-history-card {
+      display: grid;
+      gap: 8px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.09);
+      border: 1px solid rgba(255,255,255,.13);
+    }
+    .trip-history-card.active { border-color: rgba(48,209,88,.50); box-shadow: 0 0 0 3px rgba(48,209,88,.10); }
+    .trip-history-main { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+    .trip-history-title { font-weight: 950; color: var(--text); line-height: 1.25; word-break: break-word; }
+    .trip-history-meta { margin-top: 4px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+    .trip-history-badge {
+      flex: 0 0 auto;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 950;
+      color: #d7ffe3;
+      background: rgba(48,209,88,.15);
+      border: 1px solid rgba(48,209,88,.24);
+      white-space: nowrap;
+    }
+    .trip-history-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .trip-history-actions button { min-height: 38px; border-radius: 14px; font-size: 12px; font-weight: 900; }
+    .trip-history-actions .danger { color: #ff6961; background: rgba(255,59,48,.10); border: 1px solid rgba(255,59,48,.20); }
+    body[data-theme="light"] .trip-history-card { background: rgba(255,255,255,.72); border-color: rgba(0,0,0,.08); }
+    body[data-theme="light"] .pill-btn.danger, body[data-theme="light"] .event-delete-form-btn { color: #fff; background: linear-gradient(135deg, #ff3b30, #ff7a59); }
     .helper { color: rgba(255,255,255,.48); font-size: 12px; line-height: 1.45; margin: 10px 2px 0; }
     .folder-note {
       display: inline-flex;
@@ -1529,7 +1565,7 @@
     }
 
 </style>
-  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782021570902&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000522072088157fa5acdc1f83f%26fn%3DPremium_Trip_Firebase_d5119_config.html%26cd%3Dattachment%26ts%3D495006%26p%3Dfs%26cid%3D1%26sig%3D25ffede8db211ee92bd99acaeb7c6a61e639a09b60475aa029d4611ece9f81fe%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782021570902&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782021570902&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_0000000051b87208bbfc06606ff1fe07%26fn%3DPremium_Trip_multi_trip_delete_event.html%26cd%3Dattachment%26ts%3D495006%26p%3Dfs%26cid%3D1%26sig%3D4c605c6d526bdfdd17acbbff81b17037939c33d051ad770d6117e0ede5c7585b%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782021570902&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
@@ -1558,6 +1594,7 @@
       <button class="settings-item" id="newDayBtn" type="button">＋ 新增日子</button>
       <button class="settings-item" id="shareSetupBtn" type="button">🔐 分享個人行程</button>
       <button class="settings-item" id="firebaseLoadBtn" type="button">📥 加入他人行程</button>
+      <button class="settings-item" id="tripHistoryBtn" type="button">📚 我的旅程紀錄</button>
       <button class="settings-item" id="exportBtn" type="button">匯出備份</button>
       <button class="settings-item" id="importBtn" type="button">匯入備份</button>
       <button class="settings-item danger" id="initBtn" type="button">初始化</button>
@@ -1663,9 +1700,10 @@
             </select>
           </label>
         </div>
-        <div class="form-actions">
+        <div class="form-actions event-form-actions">
           <button class="pill-btn" id="cancelEvent" type="button">取消</button>
-          <button class="pill-btn primary" type="submit">儲存行程</button>
+          <button class="pill-btn primary" id="saveEventBtn" type="submit">儲存行程</button>
+          <button class="pill-btn danger event-delete-form-btn" id="deleteEventBtn" type="button" hidden>刪除行程</button>
         </div>
         <p class="helper">所有修改會優先儲存在此裝置瀏覽器內；用「匯出備份」可另存 JSON。</p>
       </form>
@@ -2374,6 +2412,7 @@
     const THEME_KEY = "nagoya-premium-trip-theme";
     const APP_TITLE_KEY = "nagoya-premium-trip-title";
     const SHARE_KEY = "premium-trip-share-settings";
+    const TRIP_HISTORY_KEY = "premium-trip-history-v1";
     const CLIENT_KEY = "premium-trip-client-id";
     const DEFAULT_APP_TITLE = "優旅程 - Premium Trip";
     const DEFAULT_TRIP_NAME = "未命名旅程";
@@ -2479,6 +2518,62 @@
         console.warn("Share settings read failed", error);
         return { enabled: false };
       }
+    }
+
+    function loadTripHistory() {
+      try {
+        const raw = storageGet(TRIP_HISTORY_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(list)) return [];
+        const seen = new Set();
+        return list
+          .filter(item => item && /^[A-Za-z0-9]{10}$/.test(String(item.tripShareId || "")))
+          .filter(item => {
+            if (seen.has(item.tripShareId)) return false;
+            seen.add(item.tripShareId);
+            return true;
+          })
+          .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+      } catch (error) {
+        console.warn("Trip history read failed", error);
+        return [];
+      }
+    }
+
+    function saveTripHistory(list) {
+      storageSet(TRIP_HISTORY_KEY, JSON.stringify((Array.isArray(list) ? list : []).slice(0, 30)));
+    }
+
+    function upsertTripHistory(record = {}) {
+      const id = String(record.tripShareId || "").trim();
+      if (!/^[A-Za-z0-9]{10}$/.test(id)) return;
+      const list = loadTripHistory().filter(item => item.tripShareId !== id);
+      const now = new Date().toISOString();
+      list.unshift({
+        tripShareId: id,
+        password: String(record.password || ""),
+        tripName: String(record.tripName || loadAppTitle() || DEFAULT_TRIP_NAME),
+        role: record.role === "joined" ? "joined" : "owner",
+        createdAt: record.createdAt || now,
+        updatedAt: now
+      });
+      saveTripHistory(list);
+    }
+
+    function removeTripHistory(tripShareId) {
+      saveTripHistory(loadTripHistory().filter(item => item.tripShareId !== tripShareId));
+    }
+
+    function rememberCurrentSharedTrip(role = "owner") {
+      const share = loadShareSettings();
+      if (!share.enabled || !share.tripShareId || !share.password) return;
+      const existing = loadTripHistory().find(item => item.tripShareId === share.tripShareId);
+      upsertTripHistory({
+        tripShareId: share.tripShareId,
+        password: share.password,
+        tripName: loadAppTitle(),
+        role: existing && existing.role ? existing.role : role
+      });
     }
 
     function isShareEnabled() {
@@ -2994,6 +3089,9 @@
       const now = new Date();
       saveStatus.textContent = "已儲存：" + now.toLocaleTimeString("zh-HK", { hour: "2-digit", minute: "2-digit" });
       updateShareButton();
+      if (share.enabled && share.tripShareId && share.password) {
+        rememberCurrentSharedTrip("owner");
+      }
       scheduleFirebaseSync();
       if (show) showToast(isShareEnabled() ? "已儲存並準備同步" : "已儲存到此裝置");
     }
@@ -3433,6 +3531,11 @@
       $("#fStarred").checked = !!event.starred;
       $("#fCodeText").value = event.codeText || "";
       $("#fCodeType").value = event.codeType || "";
+      const deleteBtn = $("#deleteEventBtn");
+      if (deleteBtn) {
+        deleteBtn.hidden = isNew;
+        deleteBtn.disabled = isNew;
+      }
       openSheet();
       setTimeout(() => $("#fStartHour").focus(), 80);
     }
@@ -3494,6 +3597,29 @@
       goToDay(targetDay, false);
       persist(false);
       showToast(sourceDay !== targetDay ? "行程已搬移到指定日子" : "行程已更新並儲存");
+    }
+
+    async function deleteCurrentEventFromForm() {
+      if (!editorState || editorState.mode !== "event" || editorState.eventIndex === null) return;
+      const dayIndex = editorState.dayIndex;
+      const eventIndex = editorState.eventIndex;
+      if (!trip[dayIndex] || !trip[dayIndex].events || !trip[dayIndex].events[eventIndex]) return;
+      const target = trip[dayIndex].events[eventIndex];
+      const title = target.title || "未命名行程";
+      const ok = await showIosConfirm(`確定刪除「${title}」？\n\n為避免誤按，刪除後不能在 App 內復原。`, {
+        title: "刪除行程",
+        confirmText: "刪除行程",
+        danger: true
+      });
+      if (!ok) return;
+      trip[dayIndex].events.splice(eventIndex, 1);
+      closeSheet();
+      activeDay = Math.max(0, Math.min(dayIndex, trip.length - 1));
+      refreshMomentFocus();
+      renderKeepingScroll(activeDay, getPageScrollTop(activeDay));
+      goToDay(activeDay, false);
+      persist(false);
+      showToast("行程已刪除");
     }
 
     function saveDayFromForm(event) {
@@ -3752,6 +3878,7 @@
         payload.updatedAt = api.serverTimestamp();
         await api.setDoc(api.doc(api.db, "trips", share.tripShareId), payload, { merge: true });
         firebaseLastSavedKey = stateKey;
+        upsertTripHistory({ tripShareId: share.tripShareId, password: share.password, tripName: loadAppTitle(), role: "owner" });
         removeEventShareIds();
         if (!firebaseRemoteApplying) {
           const now = new Date();
@@ -3796,6 +3923,7 @@
           try {
             trip = normalizeTripData(data.trip);
             applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
+            rememberCurrentSharedTrip("joined");
             activeDay = trip.length ? Math.max(0, Math.min(activeDay, trip.length - 1)) : 0;
             activeFilter = "all";
             refreshMomentFocus();
@@ -3815,6 +3943,116 @@
       }
     }
 
+    async function applyFirebaseTripByCredentials(cleanId, password, options = {}) {
+      const api = await getFirebaseApi();
+      const snap = await api.getDoc(api.doc(api.db, "trips", cleanId));
+      if (!snap.exists()) throw new Error("找不到此旅程 ID。請確認 ID 是否正確，或請對方先開啟「分享個人行程」。");
+      const data = snap.data();
+      const passwordHash = await sha256Text(password);
+      const savedHash = data && data.share && data.share.passwordHash;
+      if (savedHash && savedHash !== passwordHash) throw new Error("密碼不正確。");
+      if (!data || !Array.isArray(data.trip)) throw new Error("Firebase 內的旅程資料格式不正確。");
+
+      stopFirebaseLiveSync();
+      firebaseRemoteApplying = true;
+      try {
+        trip = normalizeTripData(data.trip);
+        applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
+        storageSet(SHARE_KEY, JSON.stringify({
+          enabled: true,
+          tripShareId: cleanId,
+          password,
+          enabledAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }));
+        upsertTripHistory({ tripShareId: cleanId, password, tripName: data.tripName || DEFAULT_TRIP_NAME, role: options.role || "joined" });
+        removeEventShareIds();
+        activeDay = 0;
+        activeFilter = "all";
+        refreshMomentFocus();
+        updateShareButton();
+        persist(false);
+        render();
+        if (trip.length) jumpToNow(false); else goToDay(0, false);
+      } finally {
+        firebaseRemoteApplying = false;
+      }
+      await startFirebaseLiveSync();
+      return data;
+    }
+
+    async function showTripHistory() {
+      closeSettingsMenu();
+      const list = loadTripHistory();
+      if (!list.length) {
+        await showIosAlert("暫時未有旅程紀錄。\n\n當你使用「分享個人行程」或「加入他人行程」後，這裡會自動記住專屬 ID，之後可快速切換。", "我的旅程紀錄");
+        return;
+      }
+      const body = document.createElement("div");
+      body.className = "trip-history-list";
+      const current = loadShareSettings();
+      list.forEach((item) => {
+        const card = document.createElement("div");
+        const active = current.enabled && current.tripShareId === item.tripShareId;
+        card.className = "trip-history-card" + (active ? " active" : "");
+        const roleText = item.role === "joined" ? "加入" : "建立";
+        const updated = item.updatedAt ? new Date(item.updatedAt).toLocaleString("zh-HK", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }) : "--";
+        card.innerHTML = `
+          <div class="trip-history-main">
+            <div>
+              <div class="trip-history-title">${escapeHTML(item.tripName || DEFAULT_TRIP_NAME)}</div>
+              <div class="trip-history-meta">ID：${escapeHTML(item.tripShareId)}<br>密碼：${escapeHTML(item.password || "") || "未儲存"}<br>更新：${escapeHTML(updated)}</div>
+            </div>
+            <span class="trip-history-badge">${active ? "目前" : roleText}</span>
+          </div>
+          <div class="trip-history-actions">
+            <button class="pill-btn primary" type="button" data-history-load="${escapeHTML(item.tripShareId)}">切換</button>
+            <button class="pill-btn danger" type="button" data-history-delete="${escapeHTML(item.tripShareId)}">刪除紀錄</button>
+          </div>`;
+        body.appendChild(card);
+      });
+      body.addEventListener("click", async (event) => {
+        const loadBtn = event.target.closest("[data-history-load]");
+        const deleteBtn = event.target.closest("[data-history-delete]");
+        if (loadBtn) {
+          const id = loadBtn.getAttribute("data-history-load");
+          const item = loadTripHistory().find(row => row.tripShareId === id);
+          if (!item) return;
+          closeIosModal(null);
+          try {
+            await applyFirebaseTripByCredentials(item.tripShareId, item.password || "", { role: item.role || "joined" });
+            await showIosAlert(`已切換到「${item.tripName || DEFAULT_TRIP_NAME}」。`, "切換完成");
+          } catch (error) {
+            console.error(error);
+            await showIosAlert("切換旅程失敗：" + (error && error.message ? error.message : error), "切換失敗");
+          }
+        }
+        if (deleteBtn) {
+          const id = deleteBtn.getAttribute("data-history-delete");
+          const item = loadTripHistory().find(row => row.tripShareId === id);
+          if (!item) return;
+          const ok = await showIosConfirm(`只刪除此裝置的旅程紀錄，不會刪除 Firebase 內的旅程。\n\nID：${id}`, { title: "刪除旅程紀錄", confirmText: "刪除紀錄", danger: true });
+          if (!ok) return;
+          removeTripHistory(id);
+          const localShare = loadShareSettings();
+          if (localShare.enabled && localShare.tripShareId === id) {
+            stopFirebaseLiveSync();
+            storageRemove(SHARE_KEY);
+            updateShareButton();
+            persist(false);
+          }
+          closeIosModal(null);
+          showToast("旅程紀錄已刪除");
+        }
+      });
+      await openIosModal({
+        title: "我的旅程紀錄",
+        message: "這裡只記錄你曾經建立或加入過的 Firebase 旅程，方便日後快速切換。",
+        body,
+        actions: [{ label: "關閉", value: null, cancel: true }]
+      });
+    }
+
     async function loadTripFromFirebase() {
       closeSettingsMenu();
       const tripShareId = await showIosPrompt("加入他人行程", loadShareSettings().tripShareId || "", {
@@ -3829,39 +4067,7 @@
       if (!isValidSharePassword(password)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字。", "密碼格式錯誤");
 
       try {
-        const api = await getFirebaseApi();
-        const snap = await api.getDoc(api.doc(api.db, "trips", cleanId));
-        if (!snap.exists()) return showIosAlert("找不到此旅程 ID。請確認 ID 是否正確，或請對方先開啟「分享個人行程」。", "找不到旅程");
-        const data = snap.data();
-        const passwordHash = await sha256Text(password);
-        const savedHash = data && data.share && data.share.passwordHash;
-        if (savedHash && savedHash !== passwordHash) return showIosAlert("密碼不正確。", "加入失敗");
-        if (!data || !Array.isArray(data.trip)) return showIosAlert("Firebase 內的旅程資料格式不正確。", "資料格式錯誤");
-
-        stopFirebaseLiveSync();
-        firebaseRemoteApplying = true;
-        try {
-          trip = normalizeTripData(data.trip);
-          applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
-          storageSet(SHARE_KEY, JSON.stringify({
-            enabled: true,
-            tripShareId: cleanId,
-            password,
-            enabledAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString()
-          }));
-          removeEventShareIds();
-          activeDay = 0;
-          activeFilter = "all";
-          refreshMomentFocus();
-          updateShareButton();
-          persist(false);
-          render();
-          if (trip.length) jumpToNow(false); else goToDay(0, false);
-        } finally {
-          firebaseRemoteApplying = false;
-        }
-        await startFirebaseLiveSync();
+        await applyFirebaseTripByCredentials(cleanId, password, { role: "joined" });
         await showIosAlert("已加入他人行程，並開始 Firebase 即時同步。之後你或其他人的修改會自動更新。", "加入完成");
       } catch (error) {
         console.error(error);
@@ -3894,9 +4100,13 @@
     const manualFirebaseSaveBtn = $("#firebaseSaveBtn");
     if (manualFirebaseSaveBtn) manualFirebaseSaveBtn.addEventListener("click", () => saveTripToFirebase({ silent: false, force: true }));
     $("#firebaseLoadBtn").addEventListener("click", loadTripFromFirebase);
+    const tripHistoryBtn = $("#tripHistoryBtn");
+    if (tripHistoryBtn) tripHistoryBtn.addEventListener("click", showTripHistory);
     $("#fab").addEventListener("click", () => openEventEditor(activeDay, null));
     $("#closeSheet").addEventListener("click", closeSheet);
     $("#cancelEvent").addEventListener("click", closeSheet);
+    const deleteEventBtn = $("#deleteEventBtn");
+    if (deleteEventBtn) deleteEventBtn.addEventListener("click", deleteCurrentEventFromForm);
     $("#cancelDay").addEventListener("click", closeSheet);
     $("#eventForm").addEventListener("submit", saveEventFromForm);
     $("#dayForm").addEventListener("submit", saveDayFromForm);
@@ -3920,6 +4130,7 @@
       storageRemove(STORAGE_KEY);
       storageRemove(APP_TITLE_KEY);
       storageRemove(SHARE_KEY);
+      storageRemove(TRIP_HISTORY_KEY);
       removeEventShareIds();
       applyAppTitle(DEFAULT_TRIP_NAME);
       refreshMomentFocus();
