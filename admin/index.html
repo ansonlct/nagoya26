@@ -274,7 +274,7 @@
     .btn.primary { color: #fff; background: linear-gradient(135deg, #ff375f, #7c5cff); border-color: transparent; }
     @media (max-width: 520px) { .admin-actions { grid-template-columns: 1fr; } }
   </style>
-</head>
+<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000009d34720ba97edd7e3eb51b21%26fn%3DPremium_Trip_admin_page_login_delete_fixed.html%26cd%3Dattachment%26ts%3D495008%26p%3Dfs%26cid%3D1%26sig%3D7d483ea1703e35ba6f332c32342cd0d388957f0b6af778afb9fd533e88d1ca38%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <main class="page">
     <header class="topbar">
@@ -384,6 +384,14 @@
 
     function showModal({ title = "提示", message = "", input = false, inputType = "text", placeholder = "", defaultValue = "", buttons = [] }) {
       return new Promise(resolve => {
+        let settled = false;
+        const finish = result => {
+          if (settled) return;
+          settled = true;
+          closeModal();
+          resolve(result);
+        };
+
         modalBackdrop.hidden = false;
         const inputHtml = input ? `<div class="ios-modal-body"><input class="ios-modal-input" id="modalInput" type="${escapeHTML(inputType)}" placeholder="${escapeHTML(placeholder)}" value="${escapeHTML(defaultValue)}" /></div>` : "";
         const actionClass = buttons.length > 2 ? "" : "multi";
@@ -398,30 +406,31 @@
               ${buttons.map((btn, index) => `<button class="ios-modal-btn ${btn.role || ""}" data-modal-index="${index}" type="button">${escapeHTML(btn.label)}</button>`).join("")}
             </div>
           </section>`;
+
         const inputEl = $("#modalInput", modalBackdrop);
+        const actionButtons = [...modalBackdrop.querySelectorAll("[data-modal-index]")];
+        actionButtons.forEach(button => {
+          button.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation();
+            const index = Number(button.dataset.modalIndex);
+            const btn = buttons[index] || {};
+            const value = inputEl ? inputEl.value : undefined;
+            finish(input ? { action: btn.value, value } : btn.value);
+          }, { once: true });
+        });
+
         if (inputEl) {
           setTimeout(() => inputEl.focus(), 80);
           inputEl.addEventListener("keydown", event => {
             if (event.key === "Enter") {
+              event.preventDefault();
               const primaryIndex = Math.max(0, buttons.findIndex(btn => btn.primary));
-              const btn = buttons[primaryIndex] || buttons[0];
-              const value = inputEl.value;
-              closeModal();
-              resolve(btn && btn.value !== undefined ? { action: btn.value, value } : value);
+              const btn = buttons[primaryIndex] || buttons[0] || {};
+              finish({ action: btn.value, value: inputEl.value });
             }
           });
         }
-        const handleModalClick = event => {
-          const button = event.target.closest("[data-modal-index]");
-          if (!button) return;
-          const index = Number(button.dataset.modalIndex);
-          const btn = buttons[index] || {};
-          const value = inputEl ? inputEl.value : undefined;
-          modalBackdrop.removeEventListener("click", handleModalClick);
-          closeModal();
-          resolve(input ? { action: btn.value, value } : btn.value);
-        };
-        modalBackdrop.addEventListener("click", handleModalClick);
       });
     }
 
@@ -646,16 +655,23 @@
     }
 
     async function deleteTrip(id, name) {
-      const ok = await showConfirm(`即將刪除 Firebase 雲端旅程：\n${name}\n\nID：${id}\n\n此動作會影響所有使用這個 ID 的人。`, "確認刪除", true);
-      if (!ok) return;
-      const typed = await showPrompt("再次確認", "請輸入 DELETE 才會真正刪除。", { placeholder: "DELETE", okLabel: "刪除", danger: true });
-      if (typed !== "DELETE") {
-        showToast("已取消刪除");
-        return;
+      try {
+        const ok = await showConfirm(`即將刪除 Firebase 雲端旅程：\n${name}\n\nID：${id}\n\n此動作會影響所有使用這個 ID 的人。`, "確認刪除", true);
+        if (!ok) return;
+        const typed = await showPrompt("再次確認", "請輸入 DELETE 才會真正刪除。", { placeholder: "DELETE", okLabel: "刪除", danger: true });
+        if (typed !== "DELETE") {
+          showToast("已取消刪除");
+          return;
+        }
+        document.body.classList.add("loading");
+        await deleteDoc(doc(db, "trips", id));
+        showToast("已刪除 Firebase 旅程");
+        await renderTrips();
+      } catch (error) {
+        await showAlert(firebaseErrorMessage(error), "刪除失敗");
+      } finally {
+        document.body.classList.remove("loading");
       }
-      await deleteDoc(doc(db, "trips", id));
-      showToast("已刪除 Firebase 旅程");
-      await renderTrips();
     }
 
     window.__PREMIUM_TRIP_ADMIN_READY__ = true;
@@ -669,9 +685,16 @@
       const openBtn = event.target.closest("[data-open]");
       const copyBtn = event.target.closest("[data-copy]");
       const deleteBtn = event.target.closest("[data-delete]");
-      if (openBtn) openTripFromAdmin(openBtn.getAttribute("data-open"), openBtn.getAttribute("data-password") || "");
-      if (copyBtn) copyText(copyBtn.getAttribute("data-copy"));
-      if (deleteBtn) deleteTrip(deleteBtn.getAttribute("data-delete"), deleteBtn.getAttribute("data-name") || "未命名旅程");
+      if (openBtn) {
+        event.preventDefault();
+        openTripFromAdmin(openBtn.getAttribute("data-open"), openBtn.getAttribute("data-password") || "");
+      } else if (copyBtn) {
+        event.preventDefault();
+        copyText(copyBtn.getAttribute("data-copy"));
+      } else if (deleteBtn) {
+        event.preventDefault();
+        deleteTrip(deleteBtn.getAttribute("data-delete"), deleteBtn.getAttribute("data-name") || "未命名旅程");
+      }
     });
 
     const session = loadSession();
