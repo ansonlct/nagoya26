@@ -126,6 +126,25 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .share-id-mini {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #d7ffe3;
+      background: rgba(48,209,88,.16);
+      border: 1px solid rgba(48,209,88,.24);
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .2px;
+      vertical-align: 1px;
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .share-id-mini:active { transform: scale(.98); }
     .trip-name-pill {
       display: inline-flex;
       align-items: center;
@@ -150,8 +169,11 @@
       border-radius: 999px;
       padding: 3px 7px;
       font-size: 10px;
+      font-weight: 950;
       letter-spacing: .2px;
+      cursor: pointer;
     }
+    .trip-name-pill .share-mini:active { transform: scale(.98); }
 
     .toolbar { display: flex; gap: 8px; align-items: center; justify-self: end; }
     .pill-btn {
@@ -772,6 +794,14 @@
       font-weight: 800;
     }
     .time-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+    .time-picker-combo {
+      display: grid;
+      grid-template-columns: minmax(74px, 1fr) auto minmax(74px, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+    .time-picker-combo select { text-align: center; padding-left: 10px; padding-right: 10px; }
+    .time-colon { color: var(--muted); font-weight: 950; font-size: 17px; }
     .day-target-note { color: rgba(255,255,255,.50); font-size: 11.5px; line-height: 1.35; margin-top: -4px; }
 
     .backup-row {
@@ -919,6 +949,7 @@
     body[data-theme="light"] .trip-name-line { color: rgba(20,20,30,.72) !important; }
     body[data-theme="light"] .trip-name-pill { color: rgba(20,20,30,.72); background: rgba(255,255,255,.58); border-color: rgba(0,0,0,.06); }
     body[data-theme="light"] .trip-name-pill .share-mini { color: #14782d; background: rgba(48,209,88,.12); }
+    body[data-theme="light"] .share-id-mini { color: #14782d; background: rgba(48,209,88,.13); border-color: rgba(48,209,88,.22); }
     body[data-theme="light"] .edit-badge { color: #b30f35; }
     body[data-theme="light"] .hero {
       background: linear-gradient(145deg, rgba(255,255,255,.84), rgba(255,255,255,.56)), radial-gradient(circle at 92% 18%, rgba(10,132,255,.14), transparent 29%);
@@ -1094,8 +1125,411 @@
       .icon-star-btn { width: 32px; height: 32px; border-radius: 12px; font-size: 16px; }
       .tag { max-width: 100%; }
     }
-  </style>
-  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782014370795&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000700472088a575a1ed6d1b704%26fn%3DPremium_Trip_Firebase_connected.html%26cd%3Dattachment%26ts%3D495004%26p%3Dfs%26cid%3D1%26sig%3Db75e26233f70cf44df347ed7f84afb18d14e40a1db2ed867c3b4dc0b70b6dafb%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782014370795&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    .ios-modal-backdrop {
+      position: fixed;
+      z-index: 180;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0,0,0,.42);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .ios-modal-backdrop[hidden] { display: none; }
+    .ios-modal {
+      width: min(92vw, 390px);
+      overflow: hidden;
+      border-radius: 28px;
+      color: var(--text);
+      background: rgba(28,30,42,.88);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 26px 80px rgba(0,0,0,.46);
+      backdrop-filter: blur(30px) saturate(1.25);
+      -webkit-backdrop-filter: blur(30px) saturate(1.25);
+      animation: iosModalIn .22s var(--ease-spring) both;
+    }
+    .ios-modal-content { padding: 22px 20px 14px; text-align: center; }
+    .ios-modal-title { margin: 0; font-size: 18px; line-height: 1.25; font-weight: 950; letter-spacing: -.2px; }
+    .ios-modal-message {
+      margin-top: 10px;
+      color: rgba(255,255,255,.70);
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .ios-modal-body { margin-top: 14px; display: grid; gap: 10px; }
+    .ios-modal-input, .ios-modal-textarea {
+      width: 100%;
+      color: var(--text);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 16px;
+      padding: 13px 14px;
+      outline: none;
+      text-align: left;
+      font-weight: 760;
+    }
+    .ios-modal-textarea { min-height: 118px; resize: vertical; font-family: var(--font); line-height: 1.45; }
+    .ios-modal-input:focus, .ios-modal-textarea:focus { border-color: rgba(10,132,255,.68); box-shadow: 0 0 0 4px rgba(10,132,255,.16); }
+    .ios-modal-actions { display: grid; border-top: 1px solid rgba(255,255,255,.13); }
+    .ios-modal-actions.multi { grid-template-columns: 1fr 1fr; }
+    .ios-modal-actions.stack { grid-template-columns: 1fr; }
+    .ios-modal-btn {
+      min-height: 50px;
+      color: #80bdff;
+      background: transparent;
+      border-radius: 0;
+      border-right: 1px solid rgba(255,255,255,.13);
+      font-size: 15px;
+      font-weight: 850;
+    }
+    .ios-modal-btn:last-child { border-right: 0; }
+    .ios-modal-actions.stack .ios-modal-btn { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.13); }
+    .ios-modal-actions.stack .ios-modal-btn:last-child { border-bottom: 0; }
+    .ios-modal-btn.primary { color: #7bdcff; font-weight: 950; }
+    .ios-modal-btn.danger { color: #ff6961; }
+    .ios-modal-btn.cancel { color: rgba(255,255,255,.72); }
+    .ios-modal-btn:active { background: rgba(255,255,255,.08); }
+    body[data-theme="light"] .ios-modal { color: #14151d; background: rgba(252,253,255,.92); border-color: rgba(0,0,0,.08); box-shadow: 0 26px 70px rgba(45,57,95,.22); }
+    body[data-theme="light"] .ios-modal-message { color: rgba(20,20,30,.66); }
+    body[data-theme="light"] .ios-modal-input, body[data-theme="light"] .ios-modal-textarea { color: #14151d; background: rgba(255,255,255,.74); border-color: rgba(0,0,0,.10); }
+    body[data-theme="light"] .ios-modal-actions { border-top-color: rgba(0,0,0,.10); }
+    body[data-theme="light"] .ios-modal-btn { border-right-color: rgba(0,0,0,.10); color: #0a84ff; }
+    body[data-theme="light"] .ios-modal-actions.stack .ios-modal-btn { border-bottom-color: rgba(0,0,0,.10); }
+    body[data-theme="light"] .ios-modal-btn.cancel { color: rgba(20,20,30,.62); }
+    body[data-theme="light"] .ios-modal-btn.danger { color: #d70015; }
+    @keyframes iosModalIn { from { opacity: 0; transform: translateY(10px) scale(.965); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+
+
+    /* vNext: cleaner trip name + icon-only day controls */
+    .trip-name-line {
+      margin-top: 7px !important;
+      color: rgba(255,255,255,.86) !important;
+      font-size: 14px !important;
+      font-weight: 850 !important;
+      line-height: 1.35 !important;
+      max-width: min(520px, calc(100vw - 190px));
+    }
+    .trip-name-line #tripNameText {
+      font-size: 15px;
+      font-weight: 950;
+      letter-spacing: -.15px;
+    }
+    .trip-name-pill {
+      display: flex !important;
+      align-items: center !important;
+      flex-wrap: wrap !important;
+      gap: 8px !important;
+      max-width: 100% !important;
+      margin: 0 0 18px !important;
+      padding: 0 !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      color: rgba(255,255,255,.86) !important;
+      font-size: clamp(16px, 3.2vw, 19px) !important;
+      font-weight: 950 !important;
+      line-height: 1.35 !important;
+      white-space: normal !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }
+    .trip-name-pill::before {
+      content: "✦";
+      display: inline-grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 9px;
+      color: white;
+      background: linear-gradient(135deg, rgba(255,55,95,.92), rgba(124,92,255,.92));
+      box-shadow: 0 10px 22px rgba(124,92,255,.20);
+      font-size: 12px;
+      flex: 0 0 auto;
+    }
+    .trip-name-pill .share-mini,
+    .share-id-mini {
+      min-height: 24px;
+      box-shadow: 0 8px 20px rgba(48,209,88,.12);
+    }
+    .hero-actions {
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-actions .mini-btn.icon-action,
+    .onboarding-actions .mini-btn.icon-action {
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 17px;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .hero-actions .mini-btn.icon-action.good,
+    .onboarding-actions .mini-btn.icon-action.good {
+      color: #d7ffe3;
+      background: rgba(48,209,88,.16);
+      border-color: rgba(48,209,88,.24);
+    }
+    .hero-actions .mini-btn.icon-action.danger {
+      color: #ffd3d3;
+      background: rgba(255,59,48,.14);
+      border-color: rgba(255,59,48,.22);
+    }
+    .hero-actions .mini-btn.icon-action:active,
+    .onboarding-actions .mini-btn.icon-action:active {
+      transform: scale(.96);
+    }
+    body[data-theme="light"] .trip-name-line {
+      color: rgba(20,20,30,.76) !important;
+    }
+    body[data-theme="light"] .trip-name-pill {
+      color: rgba(20,20,30,.82) !important;
+      background: transparent !important;
+      border: 0 !important;
+    }
+    @media (max-width: 520px) {
+      .trip-name-line {
+        max-width: calc(100vw - 112px) !important;
+        font-size: 13px !important;
+      }
+      .trip-name-line #tripNameText { font-size: 14px; }
+      .trip-name-pill { font-size: 16px !important; margin-bottom: 16px !important; }
+      .hero-actions .mini-btn.icon-action,
+      .onboarding-actions .mini-btn.icon-action {
+        width: 42px;
+        height: 42px;
+        min-width: 42px;
+        border-radius: 16px;
+      }
+    }
+
+  
+
+    /* High-contrast day action icon buttons */
+    .hero-actions {
+      gap: 12px !important;
+      align-items: center !important;
+      margin-top: 18px !important;
+    }
+    .hero-actions .mini-btn.icon-action,
+    .onboarding-actions .mini-btn.icon-action {
+      width: 48px !important;
+      height: 48px !important;
+      min-width: 48px !important;
+      border-radius: 18px !important;
+      font-size: 22px !important;
+      font-weight: 950 !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255,255,255,.70) !important;
+      box-shadow: 0 14px 30px rgba(0,0,0,.18), inset 0 1px rgba(255,255,255,.38) !important;
+      text-shadow: 0 1px 2px rgba(0,0,0,.28) !important;
+      opacity: 1 !important;
+      filter: saturate(1.12) contrast(1.05);
+    }
+    .hero-actions .mini-btn.icon-action.good,
+    .onboarding-actions .mini-btn.icon-action.good {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #00b956, #16d77a) !important;
+      border-color: rgba(255,255,255,.80) !important;
+      box-shadow: 0 16px 34px rgba(0,185,86,.28), inset 0 1px rgba(255,255,255,.45) !important;
+    }
+    .hero-actions .mini-btn.icon-action:not(.good):not(.danger),
+    .onboarding-actions .mini-btn.icon-action:not(.good):not(.danger) {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #0a84ff, #5e5ce6) !important;
+      border-color: rgba(255,255,255,.80) !important;
+      box-shadow: 0 16px 34px rgba(10,132,255,.24), inset 0 1px rgba(255,255,255,.45) !important;
+    }
+    .hero-actions .mini-btn.icon-action.danger,
+    .onboarding-actions .mini-btn.icon-action.danger {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #ff3b30, #ff6b4a) !important;
+      border-color: rgba(255,255,255,.80) !important;
+      box-shadow: 0 16px 34px rgba(255,59,48,.26), inset 0 1px rgba(255,255,255,.45) !important;
+    }
+    .hero-actions .mini-btn.icon-action:hover,
+    .onboarding-actions .mini-btn.icon-action:hover {
+      transform: translateY(-1px);
+    }
+    .hero-actions .mini-btn.icon-action:active,
+    .onboarding-actions .mini-btn.icon-action:active {
+      transform: scale(.96) !important;
+    }
+    body[data-theme="light"] .hero-actions .mini-btn.icon-action,
+    body[data-theme="light"] .onboarding-actions .mini-btn.icon-action {
+      color: #ffffff !important;
+      border-color: rgba(255,255,255,.95) !important;
+      box-shadow: 0 16px 34px rgba(45,57,95,.18), inset 0 1px rgba(255,255,255,.50) !important;
+    }
+    body[data-theme="light"] .hero-actions .mini-btn.icon-action.good,
+    body[data-theme="light"] .onboarding-actions .mini-btn.icon-action.good {
+      background: linear-gradient(135deg, #00a84f, #16cf74) !important;
+      box-shadow: 0 16px 34px rgba(0,168,79,.25), inset 0 1px rgba(255,255,255,.50) !important;
+    }
+    body[data-theme="light"] .hero-actions .mini-btn.icon-action:not(.good):not(.danger),
+    body[data-theme="light"] .onboarding-actions .mini-btn.icon-action:not(.good):not(.danger) {
+      background: linear-gradient(135deg, #007aff, #5e5ce6) !important;
+      box-shadow: 0 16px 34px rgba(0,122,255,.23), inset 0 1px rgba(255,255,255,.50) !important;
+    }
+    body[data-theme="light"] .hero-actions .mini-btn.icon-action.danger,
+    body[data-theme="light"] .onboarding-actions .mini-btn.icon-action.danger {
+      background: linear-gradient(135deg, #ff3b30, #ff6b4a) !important;
+      box-shadow: 0 16px 34px rgba(255,59,48,.24), inset 0 1px rgba(255,255,255,.50) !important;
+    }
+    @media (max-width: 520px) {
+      .hero-actions .mini-btn.icon-action,
+      .onboarding-actions .mini-btn.icon-action {
+        width: 46px !important;
+        height: 46px !important;
+        min-width: 46px !important;
+        border-radius: 17px !important;
+        font-size: 21px !important;
+      }
+    }
+
+
+    /* vNext: narrow-screen text/layout fixes */
+    .event-card, .hero, .topbar, .day-tab, .sheet, .ios-modal { overflow-wrap: anywhere; }
+    .event-title, .desc, .hotel, .memo, .voucher-raw, .trip-name-pill, .trip-name-line { word-break: break-word; }
+    .time > span:first-of-type { white-space: nowrap; }
+    .duration-chip, .live-chip, .tag { white-space: nowrap; }
+
+    @media (max-width: 560px) {
+      .topbar { padding-left: 12px; padding-right: 12px; }
+      .topbar-inner {
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        gap: 8px !important;
+      }
+      .app-title { gap: 9px !important; min-width: 0 !important; }
+      .app-icon { width: 42px !important; height: 42px !important; border-radius: 14px !important; font-size: 22px !important; }
+      .app-title h1 { font-size: clamp(17px, 5vw, 21px) !important; letter-spacing: -.35px !important; }
+      .app-title p { margin-top: 4px !important; }
+      .trip-name-line {
+        display: flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        flex-wrap: wrap !important;
+        max-width: 100% !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        line-height: 1.22 !important;
+      }
+      .trip-name-line #tripNameText { display: inline !important; }
+      .share-id-mini {
+        margin-left: 0 !important;
+        max-width: 138px !important;
+        font-size: 9.5px !important;
+        padding: 3px 7px !important;
+      }
+      .toolbar { gap: 6px !important; }
+      .toolbar .pill-btn { min-height: 34px !important; padding: 0 9px !important; font-size: 12px !important; }
+      .theme-toggle { min-width: 36px !important; }
+
+      .day-page { padding-left: 12px !important; padding-right: 12px !important; }
+      .day-wrap { max-width: 100% !important; }
+      .hero { border-radius: 27px !important; padding: 20px 18px !important; min-height: 0 !important; }
+      .hero::before { opacity: .56 !important; transform: rotate(32deg) scale(.82) !important; }
+      .hero::after { right: 12px !important; top: 16px !important; font-size: 58px !important; }
+      .trip-name-pill {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 7px !important;
+        font-size: 17px !important;
+        line-height: 1.22 !important;
+        margin-bottom: 14px !important;
+      }
+      .trip-name-pill::before { width: 22px !important; height: 22px !important; border-radius: 8px !important; }
+      .trip-name-pill .share-mini {
+        max-width: 148px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+      }
+      .hero h2 { font-size: clamp(58px, 18vw, 82px) !important; letter-spacing: -3.5px !important; }
+      .stats { gap: 7px !important; }
+      .stat { padding: 7px 10px !important; font-size: 11.5px !important; }
+      .hero-actions { gap: 10px !important; }
+
+      .timeline { padding-left: 14px !important; margin-top: 18px !important; }
+      .timeline::before { left: 5px !important; }
+      .event-card {
+        margin-bottom: 14px !important;
+        padding: 16px 14px 15px !important;
+        border-radius: 23px !important;
+      }
+      .event-card::before { left: -15px !important; top: 24px !important; }
+      .card-top {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        justify-content: flex-start !important;
+        gap: 10px !important;
+      }
+      .time {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        gap: 6px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        font-size: 12.8px !important;
+        line-height: 1.35 !important;
+      }
+      .card-top-right {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 auto !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 7px !important;
+      }
+      .tag {
+        max-width: calc(100% - 86px) !important;
+        font-size: 11.5px !important;
+        padding: 6px 9px !important;
+      }
+      .icon-star-btn, .icon-edit-btn {
+        width: 34px !important;
+        height: 34px !important;
+        border-radius: 13px !important;
+        font-size: 16px !important;
+      }
+      .event-title {
+        margin-top: 12px !important;
+        font-size: clamp(18px, 5vw, 21px) !important;
+        line-height: 1.24 !important;
+      }
+      .desc { font-size: 14px !important; line-height: 1.48 !important; }
+      .hotel, .memo, .voucher-box { font-size: 12.8px !important; }
+      .day-rail { padding-left: 10px !important; padding-right: 10px !important; }
+      .day-tab { width: 68px !important; min-height: 54px !important; border-radius: 18px !important; }
+      .day-tab.active { width: 78px !important; }
+      .fab { width: 56px !important; height: 56px !important; right: 14px !important; bottom: calc(86px + var(--safe-bottom)) !important; }
+    }
+
+    @media (max-width: 390px) {
+      .toolbar .now-btn { padding: 0 8px !important; }
+      .toolbar .now-btn { max-width: 64px; overflow: hidden; }
+      .event-card { padding-left: 13px !important; padding-right: 13px !important; }
+      .tag { max-width: calc(100% - 78px) !important; }
+      .icon-star-btn, .icon-edit-btn { width: 32px !important; height: 32px !important; }
+      .hero h2 { font-size: clamp(54px, 19vw, 72px) !important; }
+      .stats { flex-wrap: wrap !important; }
+    }
+
+</style>
+  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782017973399&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_00000000db6872098d2eb58620bc68d3%26fn%3DPremium_Trip_narrow_screen_fixed.html%26cd%3Dattachment%26ts%3D495005%26p%3Dfs%26cid%3D1%26sig%3Dae46549b950fb920d9aa3a7def8b8c8d86414c7db41edc7a6e5428a2c80e3794%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=0&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782017973399&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
@@ -1105,7 +1539,7 @@
         <div class="app-icon" aria-hidden="true">旅</div>
         <div>
           <h1 id="appTitleText">優旅程 - Premium Trip</h1>
-          <p class="trip-name-line">旅程：<span id="tripNameText">未命名旅程</span></p>
+          <p class="trip-name-line">旅程：<span id="tripNameText">未命名旅程</span> <button class="share-id-mini" id="headerShareChip" type="button" hidden>專屬ID：----</button></p>
           <p id="currentDayLabel">左右橫掃切換日子</p>
         </div>
       </div>
@@ -1141,6 +1575,18 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+
+  <div class="ios-modal-backdrop" id="iosModalBackdrop" hidden aria-hidden="true">
+    <section class="ios-modal" role="dialog" aria-modal="true" aria-labelledby="iosModalTitle">
+      <div class="ios-modal-content">
+        <h3 class="ios-modal-title" id="iosModalTitle">提示</h3>
+        <div class="ios-modal-message" id="iosModalMessage"></div>
+        <div class="ios-modal-body" id="iosModalBody"></div>
+      </div>
+      <div class="ios-modal-actions" id="iosModalActions"></div>
+    </section>
+  </div>
+
   <div class="sheet-backdrop" id="sheetBackdrop" aria-hidden="true">
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
       <div class="grabber" aria-hidden="true"></div>
@@ -1152,10 +1598,18 @@
       <form id="eventForm" class="form-grid">
         <div class="time-grid">
           <label>開始時間
-            <select id="fStartTime" name="startTime"></select>
+            <div class="time-picker-combo" aria-label="開始時間">
+              <select id="fStartHour" name="startHour" aria-label="開始小時"></select>
+              <span class="time-colon">:</span>
+              <select id="fStartMinute" name="startMinute" aria-label="開始分鐘"></select>
+            </div>
           </label>
           <label>結束時間
-            <select id="fEndTime" name="endTime"></select>
+            <div class="time-picker-combo" aria-label="結束時間">
+              <select id="fEndHour" name="endHour" aria-label="結束小時"></select>
+              <span class="time-colon">:</span>
+              <select id="fEndMinute" name="endMinute" aria-label="結束分鐘"></select>
+            </div>
           </label>
         </div>
         <label>分類（可選擇或自由寫）
@@ -1988,13 +2442,14 @@
       if (tripNameEl) tripNameEl.textContent = clean;
       document.title = DEFAULT_APP_TITLE;
       if (options.persist !== false) storageSet(APP_TITLE_KEY, clean);
+      updateShareDisplay();
       return clean;
     }
 
-    function editAppTitle() {
+    async function editAppTitle() {
       closeSettingsMenu();
       const current = loadAppTitle();
-      const next = prompt("輸入旅程名稱", current);
+      const next = await showIosPrompt("修改旅程名稱", current, { placeholder: "輸入旅程名稱" });
       if (next === null) return;
       const clean = applyAppTitle(next, { persist: true });
       saveStatus.textContent = "旅程名稱已更新";
@@ -2078,32 +2533,109 @@
         btn.classList.remove("share-on");
         btn.removeAttribute("title");
       }
+      updateShareDisplay();
     }
 
-    function openShareSetup() {
+    function updateShareDisplay() {
+      const chip = $("#headerShareChip");
+      if (!chip) return;
+      const settings = loadShareSettings();
+      if (settings.enabled && settings.tripShareId) {
+        chip.hidden = false;
+        chip.textContent = `專屬ID：${settings.tripShareId}`;
+        chip.title = "查看及複製專屬 ID 和密碼";
+      } else {
+        chip.hidden = true;
+        chip.textContent = "專屬ID：----";
+        chip.removeAttribute("title");
+      }
+    }
+
+    function shareInfoText(settings = loadShareSettings()) {
+      return `優旅程 - Premium Trip
+旅程名稱：${loadAppTitle()}
+專屬ID：${settings.tripShareId || ""}
+密碼：${settings.password || ""}`;
+    }
+
+    async function copyTextToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+      const temp = document.createElement("textarea");
+      temp.value = text;
+      temp.setAttribute("readonly", "");
+      temp.style.position = "fixed";
+      temp.style.left = "-9999px";
+      document.body.appendChild(temp);
+      temp.select();
+      let ok = false;
+      try { ok = document.execCommand("copy"); } catch (error) { ok = false; }
+      temp.remove();
+      return ok;
+    }
+
+    async function openShareDetails() {
+      const settings = loadShareSettings();
+      if (!settings.enabled || !settings.tripShareId) return showToast("尚未開啟分享");
+      const text = shareInfoText(settings);
+      const shouldCopy = await showIosConfirm(`${text}
+
+是否複製專屬 ID 及密碼，方便分享給他人？`, {
+        title: "分享資料",
+        confirmText: "複製",
+        cancelText: "關閉"
+      });
+      if (!shouldCopy) return;
+      try {
+        const ok = await copyTextToClipboard(text);
+        if (ok) showToast("已複製專屬 ID 及密碼");
+        else await showIosCopyBox("手動複製", "請複製以下資料：", text);
+      } catch (error) {
+        await showIosCopyBox("手動複製", "請複製以下資料：", text);
+      }
+    }
+
+    async function openShareSetup() {
       closeSettingsMenu();
       const current = loadShareSettings();
       if (current.enabled) {
-        const choice = prompt(
-          `分享 / Firebase 準備已開啟\n旅程分享 ID：${current.tripShareId}\n\n輸入 1：查看狀態\n輸入 2：更改密碼\n輸入 3：關閉分享並刪除旅程分享 ID`,
-          "1"
+        const choice = await showIosActionSheet(
+          "分享 / Firebase 準備",
+          `旅程分享 ID：${current.tripShareId}
+此 ID 代表整個旅程。`,
+          [
+            { label: "查看狀態", value: "status", primary: true },
+            { label: "更改密碼", value: "password" },
+            { label: "關閉分享並刪除 ID", value: "close", danger: true }
+          ]
         );
-        if (choice === null) return;
-        if (choice.trim() === "1") {
-          alert(`旅程名稱：${loadAppTitle()}\n旅程分享 ID：${current.tripShareId}\n此 ID 代表整個旅程。Firebase 尚未連接；目前是本機分享資料準備模式。`);
+        if (choice === "status") {
+          await showIosAlert(`旅程名稱：${loadAppTitle()}
+旅程分享 ID：${current.tripShareId}
+此 ID 代表整個旅程。Firebase 尚未連接；目前是本機分享資料準備模式。`, "分享狀態");
           return;
         }
-        if (choice.trim() === "2") {
-          const nextPassword = prompt("輸入新的分享密碼：只可用英文字母及數字，最少 8 位", "");
+        if (choice === "password") {
+          const nextPassword = await showIosPrompt("輸入新的分享密碼", "", {
+            message: "只可用英文字母及數字，最少 8 位。",
+            inputType: "password",
+            placeholder: "例如 Trip2026A"
+          });
           if (nextPassword === null) return;
-          if (!isValidSharePassword(nextPassword)) return alert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。");
+          if (!isValidSharePassword(nextPassword)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。", "密碼格式錯誤");
           storageSet(SHARE_KEY, JSON.stringify({ ...current, password: nextPassword, updatedAt: new Date().toISOString() }));
           updateShareButton();
           persist(false);
           return showToast("分享密碼已更新");
         }
-        if (choice.trim() === "3") {
-          const ok = confirm("確定關閉分享準備？旅程分享 ID 會從本機資料中刪除，回到純 localStorage 模式。");
+        if (choice === "close") {
+          const ok = await showIosConfirm("確定關閉分享準備？旅程分享 ID 會從本機資料中刪除，回到純 localStorage 模式。", {
+            title: "關閉分享",
+            confirmText: "關閉分享",
+            danger: true
+          });
           if (!ok) return;
           removeEventShareIds();
           storageRemove(SHARE_KEY);
@@ -2115,9 +2647,13 @@
         return;
       }
 
-      const password = prompt("開啟分享 / Firebase 準備前，請設定分享密碼：只可用英文字母及數字，最少 8 位", "");
+      const password = await showIosPrompt("開啟分享 / Firebase 準備", "", {
+        message: "請設定分享密碼：只可用英文字母及數字，最少 8 位。",
+        inputType: "password",
+        placeholder: "例如 Trip2026A"
+      });
       if (password === null) return;
-      if (!isValidSharePassword(password)) return alert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。");
+      if (!isValidSharePassword(password)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。", "密碼格式錯誤");
       const ids = collectShareIds();
       const share = {
         enabled: true,
@@ -2130,7 +2666,9 @@
       updateShareButton();
       render();
       persist(false);
-      alert(`已開啟分享 / Firebase 準備\n旅程分享 ID：${share.tripShareId}\n此 ID 代表整個旅程。`);
+      await showIosAlert(`已開啟分享 / Firebase 準備
+旅程分享 ID：${share.tripShareId}
+此 ID 代表整個旅程。`, "分享已開啟");
     }
 
     function preferredTheme() {
@@ -2212,23 +2750,38 @@
     }
 
     const TIME_STEP_MINUTES = 5;
+    const TIME_MINUTE_VALUES = Array.from({ length: 12 }, (_, i) => i * TIME_STEP_MINUTES);
 
-    function buildTimeOptionsHTML() {
-      let html = '<option value="">--:--</option>';
+    function buildHourOptionsHTML() {
+      let html = '<option value="">時</option>';
       for (let h = 0; h < 24; h += 1) {
-        for (let m = 0; m < 60; m += TIME_STEP_MINUTES) {
-          const value = `${padTimePart(h)}:${padTimePart(m)}`;
-          html += `<option value="${value}">${value}</option>`;
-        }
+        const value = padTimePart(h);
+        html += `<option value="${value}">${value}</option>`;
+      }
+      return html;
+    }
+
+    function buildMinuteOptionsHTML() {
+      let html = '<option value="">分</option>';
+      for (const m of TIME_MINUTE_VALUES) {
+        const value = padTimePart(m);
+        html += `<option value="${value}">${value}</option>`;
       }
       return html;
     }
 
     function setupTimeSelects() {
-      const html = buildTimeOptionsHTML();
-      [$("#fStartTime"), $("#fEndTime")].forEach((select) => {
+      const hourHTML = buildHourOptionsHTML();
+      const minuteHTML = buildMinuteOptionsHTML();
+      [$("#fStartHour"), $("#fEndHour")].forEach((select) => {
         if (select && !select.dataset.ready) {
-          select.innerHTML = html;
+          select.innerHTML = hourHTML;
+          select.dataset.ready = "1";
+        }
+      });
+      [$("#fStartMinute"), $("#fEndMinute")].forEach((select) => {
+        if (select && !select.dataset.ready) {
+          select.innerHTML = minuteHTML;
           select.dataset.ready = "1";
         }
       });
@@ -2245,10 +2798,34 @@
       return minutesToTime(total);
     }
 
+    function setTimePickerValue(kind, value = "") {
+      const prefix = kind === "end" ? "fEnd" : "fStart";
+      const hourEl = $(`#${prefix}Hour`);
+      const minuteEl = $(`#${prefix}Minute`);
+      if (!hourEl || !minuteEl) return;
+      const snapped = snapTimeToStep(value);
+      if (!snapped) {
+        hourEl.value = "";
+        minuteEl.value = "";
+        return;
+      }
+      const [hour, minute] = snapped.split(":");
+      hourEl.value = hour;
+      minuteEl.value = minute;
+    }
+
+    function getTimePickerValue(kind) {
+      const prefix = kind === "end" ? "fEnd" : "fStart";
+      const hour = $(`#${prefix}Hour`) ? $(`#${prefix}Hour`).value : "";
+      let minute = $(`#${prefix}Minute`) ? $(`#${prefix}Minute`).value : "";
+      if (!hour) return "";
+      if (!minute) minute = "00";
+      return `${hour}:${minute}`;
+    }
+
     function setTimeSelectValue(selector, value = "") {
-      const el = $(selector);
-      if (!el) return;
-      el.value = snapTimeToStep(value);
+      // 舊函數名保留作兼容：#fStartTime / #fEndTime 會映射到新的小時 + 分鐘選擇器。
+      setTimePickerValue(String(selector || "").toLowerCase().includes("end") ? "end" : "start", value);
     }
 
     function extractTimeFields(value = "") {
@@ -2554,8 +3131,8 @@
               <div class="onboarding-step"><b>3</b><span>可加入 ⭐、重要提醒、私人備忘、QR code、條碼或優惠碼文字。</span></div>
             </div>
             <div class="onboarding-actions">
-              <button class="pill-btn primary" type="button" data-action="add" data-day="${dayIndex}">＋ 新增行程</button>
-              <button class="pill-btn" type="button" data-action="edit-day" data-day="${dayIndex}">修改日子</button>
+              <button class="mini-btn icon-action good" type="button" data-action="add" data-day="${dayIndex}" aria-label="新增行程" title="新增行程">＋</button>
+              <button class="mini-btn icon-action" type="button" data-action="edit-day" data-day="${dayIndex}" aria-label="修改日子" title="修改日子">🗓️</button>
             </div>
           </div>`
           : `
@@ -2576,7 +3153,7 @@
             <div class="day-wrap">
               <div class="hero">
                 <div class="hero-content">
-                  <div class="trip-name-pill">旅程：${escapeHTML(loadAppTitle())}${isShareEnabled() ? `<span class="share-mini">分享 ID：${escapeHTML(loadShareSettings().tripShareId || "")}</span>` : ""}</div>
+                  <div class="trip-name-pill">旅程：${escapeHTML(loadAppTitle())}${isShareEnabled() ? `<button class="share-mini" type="button" data-action="share-info" title="查看及複製專屬 ID 和密碼">專屬ID：${escapeHTML(loadShareSettings().tripShareId || "")}</button>` : ""}</div>
                   <h2>${escapeHTML(day.day || `Day ${dayIndex + 1}`)}</h2>
                   <div class="date">${escapeHTML(day.date || "未設定日期")}</div>
                   <div class="stats" aria-label="快速篩選行程">
@@ -2586,9 +3163,9 @@
                   </div>
                   ${filterForDay !== "all" ? `<div class="filter-banner">正在顯示：${escapeHTML(filterLabel(filterForDay))}<button class="filter-clear" type="button" data-action="filter" data-day="${dayIndex}" data-filter="all">顯示全部</button></div>` : ""}
                   <div class="hero-actions">
-                    <button class="mini-btn good" type="button" data-action="add" data-day="${dayIndex}">＋ 新增行程</button>
-                    <button class="mini-btn" type="button" data-action="edit-day" data-day="${dayIndex}">修改日子</button>
-                    <button class="mini-btn danger" type="button" data-action="delete-day" data-day="${dayIndex}">刪除日子</button>
+                    <button class="mini-btn icon-action good" type="button" data-action="add" data-day="${dayIndex}" aria-label="新增行程" title="新增行程">＋</button>
+                    <button class="mini-btn icon-action" type="button" data-action="edit-day" data-day="${dayIndex}" aria-label="修改日子" title="修改日子">🗓️</button>
+                    <button class="mini-btn icon-action danger" type="button" data-action="delete-day" data-day="${dayIndex}" aria-label="刪除日子" title="刪除日子">🗑️</button>
                   </div>
                 </div>
               </div>
@@ -2690,6 +3267,124 @@
       showToast.timer = setTimeout(() => toastEl.classList.remove("show"), 1900);
     }
 
+
+    const iosModalBackdrop = $("#iosModalBackdrop");
+    const iosModalTitle = $("#iosModalTitle");
+    const iosModalMessage = $("#iosModalMessage");
+    const iosModalBody = $("#iosModalBody");
+    const iosModalActions = $("#iosModalActions");
+    let iosModalResolver = null;
+
+    function closeIosModal(value = null) {
+      if (!iosModalBackdrop || iosModalBackdrop.hidden) return;
+      iosModalBackdrop.hidden = true;
+      iosModalBackdrop.setAttribute("aria-hidden", "true");
+      iosModalBody.replaceChildren();
+      iosModalActions.replaceChildren();
+      const resolver = iosModalResolver;
+      iosModalResolver = null;
+      if (resolver) resolver(value);
+    }
+
+    function openIosModal({ title = "提示", message = "", body = null, actions = [], onOpen = null } = {}) {
+      return new Promise((resolve) => {
+        iosModalResolver = resolve;
+        iosModalTitle.textContent = title;
+        iosModalMessage.textContent = message || "";
+        iosModalMessage.style.display = message ? "block" : "none";
+        iosModalBody.replaceChildren();
+        if (body) iosModalBody.appendChild(body);
+        iosModalBody.style.display = body ? "grid" : "none";
+        iosModalActions.replaceChildren();
+        const finalActions = actions.length ? actions : [{ label: "知道了", value: true, primary: true }];
+        iosModalActions.className = "ios-modal-actions " + (finalActions.length > 2 ? "stack" : "multi");
+        finalActions.forEach((action) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ios-modal-btn" + (action.primary ? " primary" : "") + (action.danger ? " danger" : "") + (action.cancel ? " cancel" : "");
+          btn.textContent = action.label;
+          btn.addEventListener("click", () => closeIosModal(action.value));
+          iosModalActions.appendChild(btn);
+        });
+        iosModalBackdrop.hidden = false;
+        iosModalBackdrop.setAttribute("aria-hidden", "false");
+        setTimeout(() => {
+          if (typeof onOpen === "function") onOpen();
+          else {
+            const primary = iosModalActions.querySelector(".primary") || iosModalActions.querySelector("button");
+            if (primary) primary.focus({ preventScroll: true });
+          }
+        }, 30);
+      });
+    }
+
+    function showIosAlert(message, title = "提示") {
+      return openIosModal({
+        title,
+        message,
+        actions: [{ label: "知道了", value: true, primary: true }]
+      });
+    }
+
+    function showIosConfirm(message, options = {}) {
+      return openIosModal({
+        title: options.title || "確認",
+        message,
+        actions: [
+          { label: options.cancelText || "取消", value: false, cancel: true },
+          { label: options.confirmText || "確定", value: true, primary: true, danger: !!options.danger }
+        ]
+      });
+    }
+
+    function showIosPrompt(title, defaultValue = "", options = {}) {
+      const input = document.createElement(options.multiline ? "textarea" : "input");
+      input.className = options.multiline ? "ios-modal-textarea" : "ios-modal-input";
+      if (!options.multiline) input.type = options.inputType || "text";
+      input.value = defaultValue || "";
+      input.placeholder = options.placeholder || "";
+      if (options.readonly) input.readOnly = true;
+      return openIosModal({
+        title,
+        message: options.message || "",
+        body: input,
+        actions: [
+          { label: options.cancelText || "取消", value: null, cancel: true },
+          { label: options.confirmText || "確定", value: "__ok__", primary: true }
+        ],
+        onOpen: () => { input.focus({ preventScroll: true }); if (!options.readonly) input.select(); }
+      }).then((result) => result === "__ok__" ? input.value : null);
+    }
+
+    function showIosActionSheet(title, message, actions = []) {
+      return openIosModal({
+        title,
+        message,
+        actions: [...actions, { label: "取消", value: null, cancel: true }]
+      });
+    }
+
+    async function showIosCopyBox(title, message, text) {
+      const textarea = document.createElement("textarea");
+      textarea.className = "ios-modal-textarea";
+      textarea.value = text || "";
+      textarea.readOnly = true;
+      const result = await openIosModal({
+        title,
+        message,
+        body: textarea,
+        actions: [
+          { label: "關閉", value: null, cancel: true },
+          { label: "複製", value: "copy", primary: true }
+        ],
+        onOpen: () => { textarea.focus({ preventScroll: true }); textarea.select(); }
+      });
+      if (result === "copy") {
+        const ok = await copyTextToClipboard(text || "");
+        showToast(ok ? "已複製" : "請手動選取文字複製");
+      }
+    }
+
     function setSheetMode(mode) {
       const sheet = $(".sheet");
       if (sheet) {
@@ -2717,9 +3412,9 @@
       $("#sheetTitle").textContent = isNew ? "新增行程" : "修改行程 / 搬移日子";
       setupTimeSelects();
       setSheetMode("event");
-      setTimeSelectValue("#fStartTime", timeFields.start);
-      setTimeSelectValue("#fEndTime", timeFields.end);
-      $("#fStartTime").dataset.suffix = timeFields.suffix;
+      setTimePickerValue("start", timeFields.start);
+      setTimePickerValue("end", timeFields.end);
+      $("#fStartHour").dataset.suffix = timeFields.suffix;
       $("#fTag").value = event.tag || "";
       renderDayOptions(dayIndex);
       $("#fTitle").value = event.title || "";
@@ -2730,7 +3425,7 @@
       $("#fCodeText").value = event.codeText || "";
       $("#fCodeType").value = event.codeType || "";
       openSheet();
-      setTimeout(() => $("#fStartTime").focus(), 80);
+      setTimeout(() => $("#fStartHour").focus(), 80);
     }
 
     function openDayEditor(dayIndex = null) {
@@ -2762,7 +3457,7 @@
       const existing = editorState.eventIndex === null ? null : trip[sourceDay].events[editorState.eventIndex];
       const payload = {
         id: existing ? existing.id : `custom-${Date.now()}`,
-        time: composeTimeRange($("#fStartTime").value, $("#fEndTime").value, $("#fStartTime").dataset.suffix || ""),
+        time: composeTimeRange(getTimePickerValue("start"), getTimePickerValue("end"), $("#fStartHour").dataset.suffix || ""),
         title: $("#fTitle").value.trim(),
         tag: $("#fTag").value.trim(),
         desc: $("#fDesc").value.trim(),
@@ -2815,7 +3510,8 @@
       showToast(editorState.dayIndex === null ? "新日子已建立" : "日子資料已更新");
     }
 
-    function handleAction(action, dayIndex, eventIndex, filterValue = "") {
+    async function handleAction(action, dayIndex, eventIndex, filterValue = "") {
+      if (action === "share-info") return openShareDetails();
       if (action === "edit-title") return editAppTitle();
       if (action === "new-day-empty") return openDayEditor(null);
       if (action === "filter") {
@@ -2832,7 +3528,7 @@
       if (action === "edit-day") return openDayEditor(dayIndex);
       if (action === "delete-day") {
         const dayName = trip[dayIndex].day || `Day ${dayIndex + 1}`;
-        const ok = confirm(`確定刪除「${dayName}」？這天內的所有行程也會被刪除。`);
+        const ok = await showIosConfirm(`確定刪除「${dayName}」？這天內的所有行程也會被刪除。`, { title: "刪除日子", confirmText: "刪除", danger: true });
         if (!ok) return;
         trip.splice(dayIndex, 1);
         activeDay = trip.length ? Math.max(0, Math.min(activeDay, trip.length - 1)) : 0;
@@ -2859,7 +3555,7 @@
         events.splice(eventIndex + 1, 0, copy);
       }
       if (action === "delete") {
-        const ok = confirm("確定刪除此行程？");
+        const ok = await showIosConfirm("確定刪除此行程？", { title: "刪除行程", confirmText: "刪除", danger: true });
         if (!ok) return;
         events.splice(eventIndex, 1);
       }
@@ -2960,10 +3656,14 @@
       let current = loadShareSettings();
       if (current.enabled && current.tripShareId && current.password) return current;
 
-      const password = prompt("首次上載 Firebase 前，請設定分享密碼：只可用英文字母及數字，最少 8 位", current.password || "");
+      const password = await showIosPrompt("首次上載 Firebase", current.password || "", {
+        message: "請設定分享密碼：只可用英文字母及數字，最少 8 位。",
+        inputType: "password",
+        placeholder: "例如 Trip2026A"
+      });
       if (password === null) return null;
       if (!isValidSharePassword(password)) {
-        alert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。");
+        await showIosAlert("密碼格式不正確：必須為 8 位或以上英數字，只可包含 A-Z、a-z、0-9。", "密碼格式錯誤");
         return null;
       }
 
@@ -3006,32 +3706,39 @@
         removeEventShareIds();
         persist(false);
         render();
-        alert(`已上載整個旅程到 Firebase。\n\n分享 ID：${share.tripShareId}\n密碼：你剛才設定的密碼\n\n朋友之後可以用此 ID + 密碼載入整個旅程。`);
+        await showIosAlert(`已上載整個旅程到 Firebase。
+
+分享 ID：${share.tripShareId}
+密碼：你剛才設定的密碼
+
+朋友之後可以用此 ID + 密碼載入整個旅程。`, "Firebase 上載完成");
       } catch (error) {
         console.error(error);
-        alert("Firebase 上載失敗：" + (error && error.message ? error.message : error));
+        await showIosAlert("Firebase 上載失敗：" + (error && error.message ? error.message : error), "上載失敗");
       }
     }
 
     async function loadTripFromFirebase() {
       closeSettingsMenu();
-      const tripShareId = prompt("輸入旅程分享 ID", loadShareSettings().tripShareId || "");
+      const tripShareId = await showIosPrompt("輸入旅程分享 ID", loadShareSettings().tripShareId || "", {
+        placeholder: "10 位英數字分享 ID"
+      });
       if (tripShareId === null) return;
       const cleanId = String(tripShareId || "").trim();
-      if (!/^[A-Za-z0-9]{10}$/.test(cleanId)) return alert("分享 ID 應為 10 位英數字。");
-      const password = prompt("輸入分享密碼", "");
+      if (!/^[A-Za-z0-9]{10}$/.test(cleanId)) return showIosAlert("分享 ID 應為 10 位英數字。", "分享 ID 格式錯誤");
+      const password = await showIosPrompt("輸入分享密碼", "", { inputType: "password" });
       if (password === null) return;
-      if (!isValidSharePassword(password)) return alert("密碼格式不正確：必須為 8 位或以上英數字。");
+      if (!isValidSharePassword(password)) return showIosAlert("密碼格式不正確：必須為 8 位或以上英數字。", "密碼格式錯誤");
 
       try {
         const api = await getFirebaseApi();
         const snap = await api.getDoc(api.doc(api.db, "trips", cleanId));
-        if (!snap.exists()) return alert("找不到此旅程 ID。請確認 ID 是否正確，或先由原裝置上載到 Firebase。");
+        if (!snap.exists()) return showIosAlert("找不到此旅程 ID。請確認 ID 是否正確，或先由原裝置上載到 Firebase。", "找不到旅程");
         const data = snap.data();
         const passwordHash = await sha256Text(password);
         const savedHash = data && data.share && data.share.passwordHash;
-        if (savedHash && savedHash !== passwordHash) return alert("密碼不正確。");
-        if (!data || !Array.isArray(data.trip)) return alert("Firebase 內的旅程資料格式不正確。");
+        if (savedHash && savedHash !== passwordHash) return showIosAlert("密碼不正確。", "載入失敗");
+        if (!data || !Array.isArray(data.trip)) return showIosAlert("Firebase 內的旅程資料格式不正確。", "資料格式錯誤");
 
         trip = normalizeTripData(data.trip);
         applyAppTitle(data.tripName || DEFAULT_TRIP_NAME, { persist: true });
@@ -3042,17 +3749,18 @@
           enabledAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         }));
+        removeEventShareIds();
         activeDay = 0;
         activeFilter = "all";
-        removeEventShareIds();
         refreshMomentFocus();
+        updateShareButton();
         persist(false);
         render();
         if (trip.length) jumpToNow(false); else goToDay(0, false);
-        alert("已從 Firebase 載入整個旅程。");
+        await showIosAlert("已從 Firebase 載入整個旅程。", "載入完成");
       } catch (error) {
         console.error(error);
-        alert("Firebase 載入失敗：" + (error && error.message ? error.message : error));
+        await showIosAlert("Firebase 載入失敗：" + (error && error.message ? error.message : error), "載入失敗");
       }
     }
 
@@ -3067,6 +3775,9 @@
       settingsMenu.addEventListener("click", (event) => event.stopPropagation());
       document.addEventListener("click", closeSettingsMenu);
     }
+
+    const headerShareChip = $("#headerShareChip");
+    if (headerShareChip) headerShareChip.addEventListener("click", openShareDetails);
 
     setupTimeSelects();
     setSheetMode("event");
@@ -3088,9 +3799,9 @@
 
 
 
-    $("#initBtn").addEventListener("click", () => {
+    $("#initBtn").addEventListener("click", async () => {
       closeSettingsMenu();
-      const ok = confirm("確定初始化？所有已建立日子、行程、備忘、兌換碼及本機紀錄都會刪除。此操作不能復原。");
+      const ok = await showIosConfirm("確定初始化？所有已建立日子、行程、備忘、兌換碼及本機紀錄都會刪除。此操作不能復原。", { title: "初始化", confirmText: "初始化", danger: true });
       if (!ok) return;
       trip = [];
       activeDay = 0;
@@ -3151,13 +3862,14 @@
         if (trip.length) jumpToNow(false); else goToDay(0, false);
         showToast("已匯入備份並儲存");
       } catch (error) {
-        alert("匯入失敗：" + error.message);
+        await showIosAlert("匯入失敗：" + error.message, "匯入失敗");
       } finally {
         event.target.value = "";
       }
     });
 
     window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && iosModalBackdrop && !iosModalBackdrop.hidden) { closeIosModal(null); return; }
       if (event.key === "Escape") closeSheet();
       if (event.key === "ArrowLeft") goToDay(activeDay - 1);
       if (event.key === "ArrowRight") goToDay(activeDay + 1);
