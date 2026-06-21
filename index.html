@@ -1,14 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="zh-Hant-HK">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="theme-color" content="#090A12" />
-  <title>優旅程 - Premium Trip</title>
-  <style>
-    :root {
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="#090A12" name="theme-color"/>
+<title>優旅程 - Premium Trip</title>
+<style>:root {
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
       --bg: #090a12;
@@ -118,14 +118,6 @@
       text-overflow: ellipsis;
     }
     .app-title p { margin: 5px 0 0; color: var(--muted); font-size: 12px; font-weight: 650; }
-    .trip-name-line {
-      color: rgba(255,255,255,.82) !important;
-      font-weight: 850 !important;
-      max-width: 430px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
     .share-id-mini {
       display: inline-flex;
       align-items: center;
@@ -145,23 +137,6 @@
       white-space: nowrap;
     }
     .share-id-mini:active { transform: scale(.98); }
-    .trip-name-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      max-width: 100%;
-      margin-bottom: 14px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      color: rgba(255,255,255,.88);
-      background: rgba(0,0,0,.18);
-      border: 1px solid rgba(255,255,255,.12);
-      font-size: 12px;
-      font-weight: 900;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
     .trip-name-pill .share-mini {
       color: #d7ffe3;
       background: rgba(48,209,88,.16);
@@ -202,13 +177,6 @@
       gap: 10px;
       padding: 0 4px;
     }
-    .edit-badge {
-      display: none;
-      color: #ffd1dc;
-      font-weight: 800;
-    }
-    body.editing .edit-badge { display: inline; }
-
     .pager {
       position: relative;
       z-index: 1;
@@ -325,7 +293,6 @@
       font-size: 11px;
       font-weight: 900;
     }
-    .hero-actions { display: flex; flex-wrap: wrap; margin-top: 16px; gap: 8px; }
 
     .timeline {
       position: relative;
@@ -362,8 +329,6 @@
       background: var(--accent);
       box-shadow: 0 0 0 5px rgba(255,55,95,.12), 0 0 0 1px rgba(255,255,255,.35);
     }
-    body.editing .event-card { border-color: rgba(255,255,255,.26); }
-    body.editing .event-card:active { transform: scale(.995); }
 
     .card-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
     .card-top-right {
@@ -489,16 +454,6 @@
       line-height: 1.45;
     }
     .memo:not(:empty) { display: block; }
-
-    .card-actions {
-      display: none;
-      gap: 7px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-      border-top: 1px solid rgba(255,255,255,.10);
-      padding-top: 12px;
-    }
-    body.editing .card-actions { display: flex; }
     .mini-btn {
       color: rgba(255,255,255,.88);
       background: rgba(255,255,255,.11);
@@ -653,7 +608,6 @@
     .onboarding-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 14px; }
     .onboarding-actions .pill-btn { min-height: 42px; }
 
-
     .day-rail {
       position: fixed;
       z-index: 45;
@@ -747,7 +701,7 @@
       align-items: flex-end;
       justify-content: center;
     }
-    .sheet-backdrop.open { display: flex; }
+    .sheet-backdrop.open { display: flex; animation: fadeIn .22s ease both; }
     .sheet {
       width: min(100%, 780px);
       max-height: calc(92dvh - var(--safe-top));
@@ -816,19 +770,6 @@
     body[data-theme="light"] .trip-history-card { background: rgba(255,255,255,.72); border-color: rgba(0,0,0,.08); }
     body[data-theme="light"] .pill-btn.danger, body[data-theme="light"] .event-delete-form-btn { color: #fff; background: linear-gradient(135deg, #ff3b30, #ff7a59); }
     .helper { color: rgba(255,255,255,.48); font-size: 12px; line-height: 1.45; margin: 10px 2px 0; }
-    .folder-note {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 12px;
-      padding: 8px 11px;
-      border-radius: 999px;
-      color: rgba(255,255,255,.76);
-      background: rgba(255,255,255,.10);
-      border: 1px solid rgba(255,255,255,.12);
-      font-size: 12px;
-      font-weight: 800;
-    }
     .time-grid { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
     .time-picker-combo {
       display: grid;
@@ -839,16 +780,6 @@
     .time-picker-combo select { text-align: center; padding-left: 10px; padding-right: 10px; }
     .time-colon { color: var(--muted); font-weight: 950; font-size: 17px; }
     .day-target-note { color: rgba(255,255,255,.50); font-size: 11.5px; line-height: 1.35; margin-top: -4px; }
-
-    .backup-row {
-      display: flex;
-      max-width: 860px;
-      margin: 10px auto 0;
-      gap: 8px;
-      padding: 0 4px;
-      overflow-x: auto;
-    }
-    .backup-row .pill-btn { min-height: 34px; font-size: 12px; padding: 0 11px; flex: 0 0 auto; }
     #importFile { display: none; }
 
     .theme-toggle { min-width: 42px; padding: 0 12px; }
@@ -890,7 +821,6 @@
     .day-page.active .event-card { animation: cardIn .46s var(--ease-spring) both; animation-delay: min(calc(var(--i, 0) * 34ms), 260ms); }
     .day-page.active .event-card.focus-pulse { animation: focusPulse .85s var(--ease-spring) both; }
     .sheet-backdrop.open .sheet { animation: sheetIn .34s var(--ease-spring) both; }
-    .sheet-backdrop.open { animation: fadeIn .22s ease both; }
 
     @keyframes heroIn { from { opacity: .35; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
     @keyframes cardIn { from { opacity: 0; transform: translateY(18px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -902,8 +832,6 @@
     body, .topbar, .day-rail, .event-card, .hero, .pill-btn, .day-tab, .sheet, input, textarea, select, .toast {
       transition: background .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease, opacity .25s ease, transform .25s ease;
     }
-
-
 
     .settings-toggle { width: 42px; min-width: 42px; padding: 0; font-size: 17px; }
     .settings-menu {
@@ -943,7 +871,6 @@
     }
     .settings-item:active { transform: scale(.985); }
 
-
     .auto-link {
       color: #8ed8ff;
       font-weight: 850;
@@ -982,11 +909,9 @@
     body[data-theme="light"] .pill-btn.primary { color: white; background: linear-gradient(135deg, #ff2d55, #6b54ff); }
     body[data-theme="light"] .pill-btn.warn { color: #8a4b00; background: rgba(255,159,10,.16); }
     body[data-theme="light"] .status-line { color: rgba(20,20,30,.55); }
-    body[data-theme="light"] .trip-name-line { color: rgba(20,20,30,.72) !important; }
-    body[data-theme="light"] .trip-name-pill { color: rgba(20,20,30,.72); background: rgba(255,255,255,.58); border-color: rgba(0,0,0,.06); }
     body[data-theme="light"] .trip-name-pill .share-mini { color: #14782d; background: rgba(48,209,88,.12); }
     body[data-theme="light"] .share-id-mini { color: #14782d; background: rgba(48,209,88,.13); border-color: rgba(48,209,88,.22); }
-    body[data-theme="light"] .edit-badge { color: #b30f35; }
+    body[data-theme="light"]
     body[data-theme="light"] .hero {
       background: linear-gradient(145deg, rgba(255,255,255,.84), rgba(255,255,255,.56)), radial-gradient(circle at 92% 18%, rgba(10,132,255,.14), transparent 29%);
       border-color: rgba(255,255,255,.72);
@@ -1012,7 +937,7 @@
     body[data-theme="light"] .desc { color: rgba(20,20,30,.70); }
     body[data-theme="light"] .hotel { background: rgba(10,132,255,.11); border-color: rgba(10,132,255,.18); color: #075cae; }
     body[data-theme="light"] .memo { background: rgba(255,204,0,.16); border-color: rgba(180,135,0,.14); color: #765800; }
-    body[data-theme="light"] .card-actions { border-top-color: rgba(0,0,0,.07); }
+    body[data-theme="light"]
     body[data-theme="light"] .mini-btn.danger { color: #ac1e18; background: rgba(255,59,48,.10); }
     body[data-theme="light"] .mini-btn.good { color: #14782d; background: rgba(48,209,88,.12); }
     body[data-theme="light"] .icon-edit-btn { color: white; background: linear-gradient(135deg, rgba(255,45,85,.95), rgba(107,84,255,.95)); border-color: transparent; }
@@ -1050,7 +975,7 @@
     body[data-theme="light"] .grabber { background: rgba(0,0,0,.18); }
     body[data-theme="light"] .close-btn { color: var(--text); background: rgba(0,0,0,.07); }
     body[data-theme="light"] label, body[data-theme="light"] .helper { color: rgba(20,20,30,.58); }
-    body[data-theme="light"] .folder-note { color: rgba(20,20,30,.65); background: rgba(255,255,255,.58); border-color: rgba(0,0,0,.06); }
+    body[data-theme="light"]
     body[data-theme="light"] .day-target-note { color: rgba(20,20,30,.48); }
     body[data-theme="light"] input, body[data-theme="light"] textarea, body[data-theme="light"] select {
       color: var(--text);
@@ -1239,8 +1164,6 @@
     body[data-theme="light"] .ios-modal-btn.danger { color: #d70015; }
     @keyframes iosModalIn { from { opacity: 0; transform: translateY(10px) scale(.965); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-
-
     /* vNext: cleaner trip name + icon-only day controls */
     .trip-name-line {
       margin-top: 7px !important;
@@ -1293,37 +1216,6 @@
       min-height: 24px;
       box-shadow: 0 8px 20px rgba(48,209,88,.12);
     }
-    .hero-actions {
-      align-items: center;
-      gap: 10px;
-    }
-    .hero-actions .mini-btn.icon-action,
-    .onboarding-actions .mini-btn.icon-action {
-      width: 44px;
-      height: 44px;
-      min-width: 44px;
-      padding: 0;
-      display: inline-grid;
-      place-items: center;
-      border-radius: 17px;
-      font-size: 20px;
-      line-height: 1;
-    }
-    .hero-actions .mini-btn.icon-action.good,
-    .onboarding-actions .mini-btn.icon-action.good {
-      color: #d7ffe3;
-      background: rgba(48,209,88,.16);
-      border-color: rgba(48,209,88,.24);
-    }
-    .hero-actions .mini-btn.icon-action.danger {
-      color: #ffd3d3;
-      background: rgba(255,59,48,.14);
-      border-color: rgba(255,59,48,.22);
-    }
-    .hero-actions .mini-btn.icon-action:active,
-    .onboarding-actions .mini-btn.icon-action:active {
-      transform: scale(.96);
-    }
     body[data-theme="light"] .trip-name-line {
       color: rgba(20,20,30,.76) !important;
     }
@@ -1339,19 +1231,14 @@
       }
       .trip-name-line #tripNameText { font-size: 14px; }
       .trip-name-pill { font-size: 16px !important; margin-bottom: 16px !important; }
-      .hero-actions .mini-btn.icon-action,
-      .onboarding-actions .mini-btn.icon-action {
-        width: 42px;
-        height: 42px;
-        min-width: 42px;
-        border-radius: 16px;
-      }
     }
 
   
 
     /* High-contrast day action icon buttons */
     .hero-actions {
+      display: flex !important;
+      flex-wrap: wrap !important;
       gap: 12px !important;
       align-items: center !important;
       margin-top: 18px !important;
@@ -1431,7 +1318,6 @@
         font-size: 21px !important;
       }
     }
-
 
     /* vNext: narrow-screen text/layout fixes */
     .event-card, .hero, .topbar, .day-tab, .sheet, .ios-modal { overflow-wrap: anywhere; }
@@ -1555,179 +1441,167 @@
     }
 
     @media (max-width: 390px) {
-      .toolbar .now-btn { padding: 0 8px !important; }
-      .toolbar .now-btn { max-width: 64px; overflow: hidden; }
+      .toolbar .now-btn { padding: 0 8px !important; max-width: 64px; overflow: hidden; }
       .event-card { padding-left: 13px !important; padding-right: 13px !important; }
       .tag { max-width: calc(100% - 78px) !important; }
       .icon-star-btn, .icon-edit-btn { width: 32px !important; height: 32px !important; }
       .hero h2 { font-size: clamp(54px, 19vw, 72px) !important; }
       .stats { flex-wrap: wrap !important; }
     }
-
 </style>
-  <script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782023374504&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000004f00720b8c81f7cbeac4bf92%26fn%3DPremium_Trip_removable_starter.html%26cd%3Dattachment%26ts%3D495006%26p%3Dfs%26cid%3D1%26sig%3D0baefbfa5eb28189fdc0a3f35cf8ac763e75e0134e5dea60f47f06da46e25292%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782023374504&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782025173017&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000006740720bbbeffdd2e04d43af%26fn%3DPremium_Trip_cleaned.html%26cd%3Dattachment%26ts%3D495007%26p%3Dfs%26cid%3D1%26sig%3D776fedab8c379e9b87dc3804bf5a19921669a3766d01f4cd917acf4a8e396563%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782025173017&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script><script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script defer="" src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 </head>
 <body>
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="app-title">
-        <div class="app-icon" aria-hidden="true">旅</div>
-        <div>
-          <h1 id="appTitleText">優旅程 - Premium Trip</h1>
-          <p class="trip-name-line">旅程：<span id="tripNameText">未命名旅程</span> <button class="share-id-mini" id="headerShareChip" type="button" hidden>專屬ID：----</button></p>
-          <p id="currentDayLabel">左右橫掃切換日子</p>
-        </div>
-      </div>
-      <div class="toolbar">
-        <button class="pill-btn now-btn" id="nowBtn" type="button">◎ 現在</button>
-        <button class="pill-btn theme-toggle" id="themeBtn" type="button" aria-label="切換暗黑或日光模式">🌙</button>
-        <button class="pill-btn settings-toggle" id="settingsBtn" type="button" aria-label="設定">⚙️</button>
-      </div>
-    </div>
-    <div class="status-line">
-      <span><span id="saveStatus">尚未修改</span></span>
-      <span id="countStatus"></span>
-    </div>
-    <div class="settings-menu" id="settingsMenu" hidden aria-label="設定選單">
-      <button class="settings-item primary" id="editTitleBtn" type="button">✏️ 修改旅程名稱</button>
-      <button class="settings-item" id="newDayBtn" type="button">＋ 新增日子</button>
-      <button class="settings-item" id="shareSetupBtn" type="button">🔐 分享個人行程</button>
-      <button class="settings-item" id="firebaseLoadBtn" type="button">📥 加入他人行程</button>
-      <button class="settings-item" id="tripHistoryBtn" type="button">📚 我的旅程紀錄</button>
-      <button class="settings-item" id="exportBtn" type="button">匯出備份</button>
-      <button class="settings-item" id="importBtn" type="button">匯入備份</button>
-      <button class="settings-item danger" id="initBtn" type="button">初始化</button>
-      <input id="importFile" type="file" accept="application/json,.json" />
-    </div>
-  </header>
-
-  <main class="pager" id="pager" aria-label="每日行程左右滑動頁面"></main>
-  <button class="fab" id="fab" type="button" aria-label="新增行程">＋</button>
-
-  <nav class="day-rail" aria-label="日子切換">
-    <div class="rail-scroll" id="dayRail"></div>
-  </nav>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-
-  <div class="ios-modal-backdrop" id="iosModalBackdrop" hidden aria-hidden="true">
-    <section class="ios-modal" role="dialog" aria-modal="true" aria-labelledby="iosModalTitle">
-      <div class="ios-modal-content">
-        <h3 class="ios-modal-title" id="iosModalTitle">提示</h3>
-        <div class="ios-modal-message" id="iosModalMessage"></div>
-        <div class="ios-modal-body" id="iosModalBody"></div>
-      </div>
-      <div class="ios-modal-actions" id="iosModalActions"></div>
-    </section>
-  </div>
-
-  <div class="sheet-backdrop" id="sheetBackdrop" aria-hidden="true">
-    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-      <div class="grabber" aria-hidden="true"></div>
-      <div class="sheet-header">
-        <h3 id="sheetTitle">修改行程</h3>
-        <button class="close-btn" id="closeSheet" type="button" aria-label="關閉">×</button>
-      </div>
-
-      <form id="eventForm" class="form-grid">
-        <div class="time-grid">
-          <label>開始時間
-            <div class="time-picker-combo" aria-label="開始時間">
-              <select id="fStartHour" name="startHour" aria-label="開始小時"></select>
-              <span class="time-colon">:</span>
-              <select id="fStartMinute" name="startMinute" aria-label="開始分鐘"></select>
-            </div>
-          </label>
-          <label>結束時間
-            <div class="time-picker-combo" aria-label="結束時間">
-              <select id="fEndHour" name="endHour" aria-label="結束小時"></select>
-              <span class="time-colon">:</span>
-              <select id="fEndMinute" name="endMinute" aria-label="結束分鐘"></select>
-            </div>
-          </label>
-        </div>
-        <label>分類（可選擇或自由寫）
-          <input id="fTag" name="tag" list="tagOptions" placeholder="選擇或輸入分類" />
-          <datalist id="tagOptions">
-            <option value="早餐"></option>
-            <option value="午餐"></option>
-            <option value="晚餐"></option>
-            <option value="購物"></option>
-            <option value="觀光"></option>
-            <option value="步行/觀光"></option>
-            <option value="駕駛"></option>
-            <option value="乘地鐵"></option>
-            <option value="乘名鐵"></option>
-            <option value="交通"></option>
-            <option value="手續"></option>
-            <option value="休息"></option>
-            <option value="休息/手續"></option>
-            <option value="離境及抵達"></option>
-            <option value="其他"></option>
-          </datalist>
-        </label>
-        <label>放入日子
+<header class="topbar">
+<div class="topbar-inner">
+<div class="app-title">
+<div aria-hidden="true" class="app-icon">旅</div>
+<div>
+<h1 id="appTitleText">優旅程 - Premium Trip</h1>
+<p class="trip-name-line">旅程：<span id="tripNameText">未命名旅程</span> <button class="share-id-mini" hidden="" id="headerShareChip" type="button">專屬ID：----</button></p>
+<p id="currentDayLabel">左右橫掃切換日子</p>
+</div>
+</div>
+<div class="toolbar">
+<button class="pill-btn now-btn" id="nowBtn" type="button">◎ 現在</button>
+<button aria-label="切換暗黑或日光模式" class="pill-btn theme-toggle" id="themeBtn" type="button">🌙</button>
+<button aria-label="設定" class="pill-btn settings-toggle" id="settingsBtn" type="button">⚙️</button>
+</div>
+</div>
+<div class="status-line">
+<span><span id="saveStatus">尚未修改</span></span>
+<span id="countStatus"></span>
+</div>
+<div aria-label="設定選單" class="settings-menu" hidden="" id="settingsMenu">
+<button class="settings-item primary" id="editTitleBtn" type="button">✏️ 修改旅程名稱</button>
+<button class="settings-item" id="newDayBtn" type="button">＋ 新增日子</button>
+<button class="settings-item" id="shareSetupBtn" type="button">🔐 分享個人行程</button>
+<button class="settings-item" id="firebaseLoadBtn" type="button">📥 加入他人行程</button>
+<button class="settings-item" id="tripHistoryBtn" type="button">📚 我的旅程紀錄</button>
+<button class="settings-item" id="exportBtn" type="button">匯出備份</button>
+<button class="settings-item" id="importBtn" type="button">匯入備份</button>
+<button class="settings-item danger" id="initBtn" type="button">初始化</button>
+<input accept="application/json,.json" id="importFile" type="file"/>
+</div>
+</header>
+<main aria-label="每日行程左右滑動頁面" class="pager" id="pager"></main>
+<button aria-label="新增行程" class="fab" id="fab" type="button">＋</button>
+<nav aria-label="日子切換" class="day-rail">
+<div class="rail-scroll" id="dayRail"></div>
+</nav>
+<div aria-live="polite" class="toast" id="toast" role="status"></div>
+<div aria-hidden="true" class="ios-modal-backdrop" hidden="" id="iosModalBackdrop">
+<section aria-labelledby="iosModalTitle" aria-modal="true" class="ios-modal" role="dialog">
+<div class="ios-modal-content">
+<h3 class="ios-modal-title" id="iosModalTitle">提示</h3>
+<div class="ios-modal-message" id="iosModalMessage"></div>
+<div class="ios-modal-body" id="iosModalBody"></div>
+</div>
+<div class="ios-modal-actions" id="iosModalActions"></div>
+</section>
+</div>
+<div aria-hidden="true" class="sheet-backdrop" id="sheetBackdrop">
+<section aria-labelledby="sheetTitle" aria-modal="true" class="sheet" role="dialog">
+<div aria-hidden="true" class="grabber"></div>
+<div class="sheet-header">
+<h3 id="sheetTitle">修改行程</h3>
+<button aria-label="關閉" class="close-btn" id="closeSheet" type="button">×</button>
+</div>
+<form class="form-grid" id="eventForm">
+<div class="time-grid">
+<label>開始時間
+            <div aria-label="開始時間" class="time-picker-combo">
+<select aria-label="開始小時" id="fStartHour" name="startHour"></select>
+<span class="time-colon">:</span>
+<select aria-label="開始分鐘" id="fStartMinute" name="startMinute"></select>
+</div>
+</label>
+<label>結束時間
+            <div aria-label="結束時間" class="time-picker-combo">
+<select aria-label="結束小時" id="fEndHour" name="endHour"></select>
+<span class="time-colon">:</span>
+<select aria-label="結束分鐘" id="fEndMinute" name="endMinute"></select>
+</div>
+</label>
+</div>
+<label>分類（可選擇或自由寫）
+          <input id="fTag" list="tagOptions" name="tag" placeholder="選擇或輸入分類"/>
+<datalist id="tagOptions">
+<option value="早餐"></option>
+<option value="午餐"></option>
+<option value="晚餐"></option>
+<option value="購物"></option>
+<option value="觀光"></option>
+<option value="步行/觀光"></option>
+<option value="駕駛"></option>
+<option value="乘地鐵"></option>
+<option value="乘名鐵"></option>
+<option value="交通"></option>
+<option value="手續"></option>
+<option value="休息"></option>
+<option value="休息/手續"></option>
+<option value="離境及抵達"></option>
+<option value="其他"></option>
+</datalist>
+</label>
+<label>放入日子
           <select id="fDayTarget" name="dayTarget"></select>
-        </label>
-        <div class="day-target-note">可先建立新日子，再把行程新增或搬移到該日子。</div>
-        <label>地點 / 標題
-          <input id="fTitle" name="title" placeholder="輸入行程地點或活動名稱" />
-        </label>
-        <label>行程內容
+</label>
+<div class="day-target-note">可先建立新日子，再把行程新增或搬移到該日子。</div>
+<label>地點 / 標題
+          <input id="fTitle" name="title" placeholder="輸入行程地點或活動名稱"/>
+</label>
+<label>行程內容
           <textarea id="fDesc" name="desc" placeholder="行程詳情、交通、目標、餐廳備註……"></textarea>
-        </label>
-        <label>重要提醒
+</label>
+<label>重要提醒
           <textarea id="fHotel" name="hotel" placeholder="訂房資訊、集合地點、特殊提醒……"></textarea>
-        </label>
-        <label>私人備忘
+</label>
+<label>私人備忘
           <textarea id="fMemo" name="memo" placeholder="帶護照、先買票、預約號碼……"></textarea>
-        </label>
-        <label class="star-form-row">
-          <input id="fStarred" name="starred" type="checkbox" />
-          <span>⭐ 標記為期待 / 關注行程</span>
-        </label>
-        <div class="code-grid">
-          <label>兌換碼 / 優惠碼/ 票券編號
-            <input id="fCodeText" name="codeText" placeholder="可選填" />
-          </label>
-          <label>顯示形式
+</label>
+<label class="star-form-row">
+<input id="fStarred" name="starred" type="checkbox"/>
+<span>⭐ 標記為期待 / 關注行程</span>
+</label>
+<div class="code-grid">
+<label>兌換碼 / 優惠碼/ 票券編號
+            <input id="fCodeText" name="codeText" placeholder="可選填"/>
+</label>
+<label>顯示形式
             <select id="fCodeType" name="codeType">
-              <option value="">只顯示文字</option>
-              <option value="qr">QR code</option>
-              <option value="barcode">條碼</option>
-            </select>
-          </label>
-        </div>
-        <div class="form-actions event-form-actions">
-          <button class="pill-btn" id="cancelEvent" type="button">取消</button>
-          <button class="pill-btn primary" id="saveEventBtn" type="submit">儲存行程</button>
-          <button class="pill-btn danger event-delete-form-btn" id="deleteEventBtn" type="button" hidden>刪除行程</button>
-        </div>
-        <p class="helper">所有修改會優先儲存在此裝置瀏覽器內；用「匯出備份」可另存 JSON。</p>
-      </form>
-
-      <form id="dayForm" class="form-grid" hidden>
-        <div class="form-grid two">
-          <label>日子標題
-            <input id="dDay" name="day" placeholder="Day 1" />
-          </label>
-          <label>日期
-            <input id="dDate" name="date" type="date" />
-          </label>
-        </div>
-        <div class="form-actions">
-          <button class="pill-btn" id="cancelDay" type="button">取消</button>
-          <button class="pill-btn primary" type="submit">儲存日子</button>
-        </div>
-        <p class="helper">建立日子後，可在新增或修改行程時選擇把行程放入哪一天。</p>
-      </form>
-    </section>
-  </div>
-
-  <script>
-    const STARTER_DATA = [];
+<option value="">只顯示文字</option>
+<option value="qr">QR code</option>
+<option value="barcode">條碼</option>
+</select>
+</label>
+</div>
+<div class="form-actions event-form-actions">
+<button class="pill-btn" id="cancelEvent" type="button">取消</button>
+<button class="pill-btn primary" id="saveEventBtn" type="submit">儲存行程</button>
+<button class="pill-btn danger event-delete-form-btn" hidden="" id="deleteEventBtn" type="button">刪除行程</button>
+</div>
+<p class="helper">所有修改會優先儲存在此裝置瀏覽器內；用「匯出備份」可另存 JSON。</p>
+</form>
+<form class="form-grid" hidden="" id="dayForm">
+<div class="form-grid two">
+<label>日子標題
+            <input id="dDay" name="day" placeholder="Day 1"/>
+</label>
+<label>日期
+            <input id="dDate" name="date" type="date"/>
+</label>
+</div>
+<div class="form-actions">
+<button class="pill-btn" id="cancelDay" type="button">取消</button>
+<button class="pill-btn primary" type="submit">儲存日子</button>
+</div>
+<p class="helper">建立日子後，可在新增或修改行程時選擇把行程放入哪一天。</p>
+</form>
+</section>
+</div>
+<script>
     const STORAGE_KEY = "nagoya-premium-trip-v2";
     const THEME_KEY = "nagoya-premium-trip-theme";
     const APP_TITLE_KEY = "nagoya-premium-trip-title";
@@ -1743,7 +1617,6 @@
 
     let trip = loadTrip();
     let activeDay = 0;
-    let editMode = false;
     let activeFilter = "all";
     let scrollRaf = null;
     let momentFocus = null;
@@ -1778,7 +1651,7 @@
     function loadTrip() {
       try {
         const raw = storageGet(STORAGE_KEY);
-        if (!raw) return normalizeTripData(deepClone(STARTER_DATA));
+        if (!raw) return normalizeTripData([]);
         const parsed = JSON.parse(raw);
         const savedTrip = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.trip) ? parsed.trip : null);
         if (!savedTrip) throw new Error("Invalid saved trip");
@@ -1788,7 +1661,7 @@
         return normalizeTripData(savedTrip);
       } catch (error) {
         console.warn(error);
-        return normalizeTripData(deepClone(STARTER_DATA));
+        return normalizeTripData([]);
       }
     }
 
@@ -1928,11 +1801,6 @@
       while (ids.has(id)) id = randomAlphaNum(10);
       ids.add(id);
       return id;
-    }
-
-    function ensureEventShareIds() {
-      // Firebase 分享只使用整個旅程的一個分享 ID；此函數只保留作向後兼容。
-      removeEventShareIds();
     }
 
     function removeEventShareIds() {
@@ -2483,7 +2351,6 @@
       });
     }
 
-
     function renderCodeFallback(box, value, type) {
       box.classList.add("fallback-only");
       box.textContent = type === "barcode" ? `條碼文字：${value}` : `QR 文字：${value}`;
@@ -2518,7 +2385,6 @@
       renderCodes(pager);
       renderRail();
       syncActiveUI(false);
-      document.body.classList.toggle("editing", editMode);
     }
 
     function renderPages() {
@@ -2635,11 +2501,6 @@
           ${event.hotel ? `<div class="hotel">🏨 ${lines(event.hotel)}</div>` : ""}
           <div class="memo">${event.memo ? "📝 " + lines(event.memo) : ""}</div>
           ${voucherHTML}
-          <div class="card-actions">
-            <button class="mini-btn" type="button" data-action="duplicate" data-day="${dayIndex}" data-event="${eventIndex}">複製</button>
-            <button class="mini-btn" type="button" data-action="move" data-day="${dayIndex}" data-event="${eventIndex}">移到其他日子</button>
-            <button class="mini-btn danger" type="button" data-action="delete" data-day="${dayIndex}" data-event="${eventIndex}">刪除</button>
-          </div>
         </article>`;
     }
 
@@ -2692,7 +2553,6 @@
       clearTimeout(showToast.timer);
       showToast.timer = setTimeout(() => toastEl.classList.remove("show"), 1900);
     }
-
 
     const iosModalBackdrop = $("#iosModalBackdrop");
     const iosModalTitle = $("#iosModalTitle");
@@ -3044,32 +2904,13 @@
         const eventIndex = actionBtn.dataset.event === undefined ? null : Number(actionBtn.dataset.event);
         return handleAction(actionBtn.dataset.action, dayIndex, eventIndex, actionBtn.dataset.filter || "");
       }
-
-      const card = event.target.closest(".event-card");
-      if (editMode && card && !event.target.closest("button")) {
-        return openEventEditor(Number(card.dataset.day), Number(card.dataset.event));
-      }
     });
-
-    const editToggleBtn = $("#editToggle");
-    if (editToggleBtn) {
-      editToggleBtn.addEventListener("click", () => {
-        editMode = !editMode;
-        document.body.classList.toggle("editing", editMode);
-        editToggleBtn.textContent = editMode ? "完成" : "修改";
-        showToast(editMode ? "可新增日子、修改行程及搬移到其他日子" : "已離開編輯模式");
-      });
-    }
-    const saveBtn = $("#saveBtn");
-    if (saveBtn) saveBtn.addEventListener("click", () => persist(true));
     $("#themeBtn").addEventListener("click", () => {
       const nextTheme = document.body.dataset.theme === "light" ? "dark" : "light";
       applyTheme(nextTheme);
       showToast(nextTheme === "light" ? "已切換到日光模式" : "已切換到暗黑模式");
     });
     $("#nowBtn").addEventListener("click", () => jumpToNow(true));
-
-
 
     const FIREBASE_CONFIG = {
       apiKey: "AIzaSyADLIcUZ4kecsCVN6HWLqlrCRbg6LJSeGQ",
@@ -3350,7 +3191,7 @@
           const id = deleteBtn.getAttribute("data-history-delete");
           const item = loadTripHistory().find(row => row.tripShareId === id);
           if (!item) return;
-          const ok = await showIosConfirm(`只刪除此裝置的旅程紀錄，不會刪除 Firebase 內的旅程。\n\nID：${id}`, { title: "刪除旅程紀錄", confirmText: "刪除紀錄", danger: true });
+          const ok = await showIosConfirm(`只刪除此裝置的紀錄，不會刪除旅程。\n\nID：${id}`, { title: "刪除旅程紀錄", confirmText: "刪除紀錄", danger: true });
           if (!ok) return;
           removeTripHistory(id);
           const localShare = loadShareSettings();
@@ -3436,8 +3277,6 @@
       startFirebaseLiveSync();
     }
 
-
-
     $("#initBtn").addEventListener("click", async () => {
       closeSettingsMenu();
       const ok = await showIosConfirm("確定初始化？所有已建立日子、行程、備忘、兌換碼及本機紀錄都會刪除。此操作不能復原。", { title: "初始化", confirmText: "初始化", danger: true });
@@ -3490,7 +3329,7 @@
         else if (parsed && parsed.appTitle && parsed.appTitle !== DEFAULT_APP_TITLE && parsed.appTitle !== "Premium Trip") applyAppTitle(parsed.appTitle, { persist: true });
         if (parsed && parsed.share && parsed.share.enabled) {
           storageSet(SHARE_KEY, JSON.stringify(parsed.share));
-          ensureEventShareIds();
+          removeEventShareIds();
         } else {
           storageRemove(SHARE_KEY);
           removeEventShareIds();
