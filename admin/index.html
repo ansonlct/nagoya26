@@ -268,7 +268,7 @@
       .actions { grid-template-columns: 1fr; }
     }
   </style>
-<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000000b5c720bb5927d6e82c63863%26ts%3D495007%26p%3Dfs%26cid%3D1%26sig%3Dca65ab03338e71a59bce31f8853c736dcb852f7d1e916c9a5ff250e8469f846f%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
+<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000007854720b9bf6e6ed6e26cad8%26fn%3DPremium_Trip_admin_page_button_fixed.html%26cd%3Dattachment%26ts%3D495008%26p%3Dfs%26cid%3D1%26sig%3De4549ee16ac2391bdf45d3f1658203eb7f84483e409eb55005e7e3491eda11e8%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <main class="page">
     <header class="topbar">
@@ -405,15 +405,17 @@
             }
           });
         }
-        modalBackdrop.addEventListener("click", event => {
+        const handleModalClick = event => {
           const button = event.target.closest("[data-modal-index]");
           if (!button) return;
           const index = Number(button.dataset.modalIndex);
           const btn = buttons[index] || {};
           const value = inputEl ? inputEl.value : undefined;
+          modalBackdrop.removeEventListener("click", handleModalClick);
           closeModal();
           resolve(input ? { action: btn.value, value } : btn.value);
-        }, { once: true });
+        };
+        modalBackdrop.addEventListener("click", handleModalClick);
       });
     }
 
