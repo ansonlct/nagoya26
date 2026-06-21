@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#090A12" />
+  <title>優旅程 Admin 管理</title>
+  <style>
+    :root {
+      --bg: #090a12;
+      --bg2: #111322;
+      --text: #f7f7fb;
+      --muted: rgba(247,247,251,.64);
+      --line: rgba(255,255,255,.14);
+      --card: rgba(255,255,255,.105);
+      --accent: #ff375f;
+      --purple: #7c5cff;
+      --green: #30d158;
+      --red: #ff453a;
+      --orange: #ff9f0a;
+      --blue: #0a84ff;
+      --shadow: 0 24px 70px rgba(0,0,0,.38);
+      --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, "Noto Sans TC", "PingFang HK", "Microsoft JhengHei", sans-serif;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font);
+      background:
+        radial-gradient(circle at 18% 8%, rgba(255,55,95,.45), transparent 29%),
+        radial-gradient(circle at 88% 4%, rgba(10,132,255,.38), transparent 29%),
+        radial-gradient(circle at 70% 88%, rgba(124,92,255,.35), transparent 34%),
+        linear-gradient(180deg, var(--bg) 0%, var(--bg2) 55%, #070710 100%);
+      overflow-x: hidden;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+      background-size: 34px 34px;
+      mask-image: linear-gradient(to bottom, rgba(0,0,0,.7), transparent 72%);
+    }
+    button, input { font: inherit; }
+    button { border: 0; cursor: pointer; }
+    .page {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 22px 16px 44px;
+      position: relative;
+      z-index: 1;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .brand { display: flex; gap: 12px; align-items: center; min-width: 0; }
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #ff5a7a, #6b54ff 54%, #00c7ff);
+      box-shadow: 0 12px 30px rgba(255,55,95,.28);
+      font-size: 24px;
+      flex: 0 0 auto;
+    }
+    h1 { margin: 0; font-size: clamp(22px, 6vw, 34px); line-height: 1.05; letter-spacing: -.8px; }
+    .subtitle { margin-top: 5px; color: var(--muted); font-size: 13px; font-weight: 750; }
+    .navlink {
+      flex: 0 0 auto;
+      color: white;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 11px 14px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.16);
+      font-weight: 900;
+      box-shadow: inset 0 1px rgba(255,255,255,.12);
+    }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 22px;
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.075));
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(28px) saturate(1.18);
+      -webkit-backdrop-filter: blur(28px) saturate(1.18);
+      margin-bottom: 16px;
+    }
+    .hero::after {
+      content: "⚙️";
+      position: absolute;
+      right: 18px;
+      top: 14px;
+      font-size: 74px;
+      opacity: .12;
+      transform: rotate(-10deg);
+    }
+    .hero h2 { margin: 0 0 8px; font-size: 24px; letter-spacing: -.35px; }
+    .hero p { margin: 0; color: rgba(255,255,255,.70); line-height: 1.55; font-size: 14px; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+    .btn {
+      min-height: 42px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--text);
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.15);
+      font-weight: 900;
+    }
+    .btn.primary { color: white; background: linear-gradient(135deg, var(--accent), var(--purple)); border-color: transparent; }
+    .btn.good { color: #d7ffe3; background: rgba(48,209,88,.14); border-color: rgba(48,209,88,.26); }
+    .btn.danger { color: #ffd3d3; background: rgba(255,69,58,.14); border-color: rgba(255,69,58,.24); }
+    .btn:active, .navlink:active { transform: scale(.98); }
+    .status {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 2px;
+      color: rgba(255,255,255,.72);
+      font-size: 12px;
+      font-weight: 850;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .chip.good { color: #d7ffe3; background: rgba(48,209,88,.13); border-color: rgba(48,209,88,.25); }
+    .chip.warn { color: #ffe1aa; background: rgba(255,159,10,.13); border-color: rgba(255,159,10,.24); }
+    .grid { display: grid; gap: 12px; }
+    .trip-card {
+      display: grid;
+      gap: 12px;
+      padding: 15px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.075));
+      border: 1px solid rgba(255,255,255,.14);
+      box-shadow: 0 14px 38px rgba(0,0,0,.22);
+      backdrop-filter: blur(22px) saturate(1.15);
+      -webkit-backdrop-filter: blur(22px) saturate(1.15);
+    }
+    .trip-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .trip-title { font-weight: 950; font-size: 17px; line-height: 1.25; word-break: break-word; }
+    .trip-id {
+      flex: 0 0 auto;
+      color: #d7ffe3;
+      background: rgba(48,209,88,.13);
+      border: 1px solid rgba(48,209,88,.25);
+      border-radius: 999px;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .4px;
+    }
+    .meta { color: var(--muted); font-size: 13px; line-height: 1.5; word-break: break-word; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .empty {
+      text-align: center;
+      padding: 26px;
+      border-radius: 24px;
+      color: rgba(255,255,255,.64);
+      background: rgba(255,255,255,.08);
+      border: 1px dashed rgba(255,255,255,.18);
+    }
+    .loading { opacity: .72; pointer-events: none; }
+    .toast {
+      position: fixed;
+      z-index: 80;
+      left: 50%;
+      bottom: 22px;
+      transform: translate(-50%, 12px);
+      opacity: 0;
+      pointer-events: none;
+      color: white;
+      background: rgba(20,20,28,.78);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: 0 14px 36px rgba(0,0,0,.35);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      font-weight: 820;
+      font-size: 13px;
+      transition: all .25s ease;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    .ios-modal-backdrop {
+      position: fixed;
+      z-index: 180;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(0,0,0,.42);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    .ios-modal-backdrop[hidden] { display: none; }
+    .ios-modal {
+      width: min(92vw, 390px);
+      overflow: hidden;
+      border-radius: 28px;
+      color: var(--text);
+      background: rgba(28,30,42,.92);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 26px 80px rgba(0,0,0,.46);
+      backdrop-filter: blur(30px) saturate(1.25);
+      -webkit-backdrop-filter: blur(30px) saturate(1.25);
+      animation: modalIn .22s cubic-bezier(.2,.9,.18,1) both;
+    }
+    .ios-modal-content { padding: 22px 20px 14px; text-align: center; }
+    .ios-modal-title { margin: 0; font-size: 18px; line-height: 1.25; font-weight: 950; letter-spacing: -.2px; }
+    .ios-modal-message { margin-top: 10px; color: rgba(255,255,255,.70); font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .ios-modal-body { margin-top: 14px; display: grid; gap: 10px; }
+    .ios-modal-input {
+      width: 100%;
+      color: var(--text);
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.16);
+      border-radius: 16px;
+      padding: 13px 14px;
+      outline: none;
+      text-align: left;
+      font-weight: 760;
+    }
+    .ios-modal-input:focus { border-color: rgba(10,132,255,.68); box-shadow: 0 0 0 4px rgba(10,132,255,.16); }
+    .ios-modal-actions { display: grid; border-top: 1px solid rgba(255,255,255,.13); }
+    .ios-modal-actions.multi { grid-template-columns: 1fr 1fr; }
+    .ios-modal-btn {
+      min-height: 50px;
+      color: #80bdff;
+      background: transparent;
+      border-radius: 0;
+      border-right: 1px solid rgba(255,255,255,.13);
+      font-size: 15px;
+      font-weight: 850;
+    }
+    .ios-modal-btn:last-child { border-right: 0; }
+    .ios-modal-btn.primary { color: #7bdcff; font-weight: 950; }
+    .ios-modal-btn.danger { color: #ff6961; }
+    .ios-modal-btn.cancel { color: rgba(255,255,255,.72); }
+    .ios-modal-btn:active { background: rgba(255,255,255,.08); }
+    @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(.965); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @media (max-width: 560px) {
+      .page { padding: 16px 12px 36px; }
+      .topbar { align-items: flex-start; }
+      .logo { width: 42px; height: 42px; border-radius: 14px; font-size: 22px; }
+      .navlink { padding: 10px 12px; font-size: 13px; }
+      .hero { padding: 18px; border-radius: 26px; }
+      .trip-top { display: grid; gap: 8px; }
+      .trip-id { justify-self: start; }
+      .actions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">旅</div>
+        <div>
+          <h1>Firebase 管理</h1>
+          <div class="subtitle">優旅程 - Premium Trip Admin</div>
+        </div>
+      </div>
+      <a class="navlink" href="../">返回 App</a>
+    </header>
+
+    <section class="hero">
+      <h2>管理所有雲端旅程</h2>
+      <p>此頁只供 Admin 使用。第一次開啟會建立 Admin 密碼，之後需要登入才可查看及刪除 Firebase 內的旅程。</p>
+      <div class="toolbar">
+        <button class="btn primary" id="loginBtn" type="button">登入 / 建立 Admin</button>
+        <button class="btn good" id="refreshBtn" type="button">重新整理</button>
+        <button class="btn" id="logoutBtn" type="button">登出</button>
+      </div>
+      <div class="status" id="statusRow">
+        <span class="chip warn">尚未登入</span>
+      </div>
+    </section>
+
+    <section class="grid" id="tripList">
+      <div class="empty">請先登入 Admin。</div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="ios-modal-backdrop" id="iosModalBackdrop" hidden></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      getDoc,
+      getDocs,
+      setDoc,
+      deleteDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyADLIcUZ4kecsCVN6HWLqlrCRbg6LJSeGQ",
+      authDomain: "premium-trip-planner-d5119.firebaseapp.com",
+      databaseURL: "https://premium-trip-planner-d5119-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "premium-trip-planner-d5119",
+      storageBucket: "premium-trip-planner-d5119.firebasestorage.app",
+      messagingSenderId: "42261346503",
+      appId: "1:42261346503:web:90fdcc9e44d905cb3366e2",
+      measurementId: "G-PLTVKHJZS3"
+    };
+
+    const ADMIN_SESSION_KEY = "premium-trip-admin-session-v2";
+    const app = initializeApp(FIREBASE_CONFIG);
+    const db = getFirestore(app);
+
+    const $ = (selector, root = document) => root.querySelector(selector);
+    const tripList = $("#tripList");
+    const statusRow = $("#statusRow");
+    const toastEl = $("#toast");
+    const modalBackdrop = $("#iosModalBackdrop");
+
+    let adminLoggedIn = false;
+    let adminHash = "";
+
+    function escapeHTML(value = "") {
+      return String(value).replace(/[&<>'"]/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "'": "&#39;",
+        '"': "&quot;"
+      }[char]));
+    }
+
+    function showToast(message) {
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toastEl.classList.remove("show"), 2200);
+    }
+
+    function closeModal() {
+      modalBackdrop.hidden = true;
+      modalBackdrop.innerHTML = "";
+    }
+
+    function showModal({ title = "提示", message = "", input = false, inputType = "text", placeholder = "", defaultValue = "", buttons = [] }) {
+      return new Promise(resolve => {
+        modalBackdrop.hidden = false;
+        const inputHtml = input ? `<div class="ios-modal-body"><input class="ios-modal-input" id="modalInput" type="${escapeHTML(inputType)}" placeholder="${escapeHTML(placeholder)}" value="${escapeHTML(defaultValue)}" /></div>` : "";
+        const actionClass = buttons.length > 2 ? "" : "multi";
+        modalBackdrop.innerHTML = `
+          <section class="ios-modal" role="dialog" aria-modal="true">
+            <div class="ios-modal-content">
+              <h3 class="ios-modal-title">${escapeHTML(title)}</h3>
+              ${message ? `<div class="ios-modal-message">${escapeHTML(message)}</div>` : ""}
+              ${inputHtml}
+            </div>
+            <div class="ios-modal-actions ${actionClass}">
+              ${buttons.map((btn, index) => `<button class="ios-modal-btn ${btn.role || ""}" data-modal-index="${index}" type="button">${escapeHTML(btn.label)}</button>`).join("")}
+            </div>
+          </section>`;
+        const inputEl = $("#modalInput", modalBackdrop);
+        if (inputEl) {
+          setTimeout(() => inputEl.focus(), 80);
+          inputEl.addEventListener("keydown", event => {
+            if (event.key === "Enter") {
+              const primaryIndex = Math.max(0, buttons.findIndex(btn => btn.primary));
+              const btn = buttons[primaryIndex] || buttons[0];
+              const value = inputEl.value;
+              closeModal();
+              resolve(btn && btn.value !== undefined ? { action: btn.value, value } : value);
+            }
+          });
+        }
+        modalBackdrop.addEventListener("click", event => {
+          const button = event.target.closest("[data-modal-index]");
+          if (!button) return;
+          const index = Number(button.dataset.modalIndex);
+          const btn = buttons[index] || {};
+          const value = inputEl ? inputEl.value : undefined;
+          closeModal();
+          resolve(input ? { action: btn.value, value } : btn.value);
+        }, { once: true });
+      });
+    }
+
+    async function showAlert(message, title = "提示") {
+      await showModal({ title, message, buttons: [{ label: "知道", value: true, role: "primary", primary: true }] });
+    }
+
+    async function showConfirm(message, title = "確認", danger = false) {
+      const result = await showModal({
+        title,
+        message,
+        buttons: [
+          { label: "取消", value: false, role: "cancel" },
+          { label: "確認", value: true, role: danger ? "danger" : "primary", primary: true }
+        ]
+      });
+      return result === true;
+    }
+
+    async function showPrompt(title, message, options = {}) {
+      const result = await showModal({
+        title,
+        message,
+        input: true,
+        inputType: options.type || "text",
+        placeholder: options.placeholder || "",
+        defaultValue: options.defaultValue || "",
+        buttons: [
+          { label: "取消", value: "cancel", role: "cancel" },
+          { label: options.okLabel || "確定", value: "ok", role: options.danger ? "danger" : "primary", primary: true }
+        ]
+      });
+      if (!result || result.action !== "ok") return null;
+      return result.value;
+    }
+
+    async function sha256(text) {
+      const data = new TextEncoder().encode(text);
+      const hash = await crypto.subtle.digest("SHA-256", data);
+      return [...new Uint8Array(hash)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+    }
+
+    function validPassword(password) {
+      return /^[A-Za-z0-9]{8,}$/.test(password || "");
+    }
+
+    function loadSession() {
+      try { return JSON.parse(localStorage.getItem(ADMIN_SESSION_KEY) || "{}"); }
+      catch { return {}; }
+    }
+
+    function saveSession(session) {
+      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify(session || {}));
+    }
+
+    function clearSession() {
+      localStorage.removeItem(ADMIN_SESSION_KEY);
+      adminLoggedIn = false;
+      adminHash = "";
+      renderStatus();
+      tripList.innerHTML = `<div class="empty">請先登入 Admin。</div>`;
+    }
+
+    async function ensureAdminLogin() {
+      const adminRef = doc(db, "admin", "settings");
+      const snap = await getDoc(adminRef);
+      const session = loadSession();
+      if (snap.exists()) {
+        const savedHash = snap.data().passwordHash || "";
+        if (session.loggedIn && session.passwordHash === savedHash) {
+          adminLoggedIn = true;
+          adminHash = savedHash;
+          renderStatus();
+          return true;
+        }
+        const password = await showPrompt("Admin 登入", "請輸入 Admin 密碼。", { type: "password", placeholder: "Admin 密碼", okLabel: "登入" });
+        if (password === null) return false;
+        const inputHash = await sha256(password);
+        if (inputHash !== savedHash) {
+          await showAlert("Admin 密碼不正確。", "登入失敗");
+          return false;
+        }
+        adminLoggedIn = true;
+        adminHash = savedHash;
+        saveSession({ loggedIn: true, passwordHash: savedHash });
+        renderStatus();
+        return true;
+      }
+      const password = await showPrompt("建立 Admin 密碼", "第一次使用 Admin 頁面，請建立 8 位或以上英數密碼。密碼會以 SHA-256 hash 儲存在 Firebase。", { type: "password", placeholder: "8 位或以上英數密碼", okLabel: "建立" });
+      if (password === null) return false;
+      if (!validPassword(password)) {
+        await showAlert("Admin 密碼必須為 8 位或以上英數字。", "密碼格式錯誤");
+        return false;
+      }
+      const passwordHash = await sha256(password);
+      await setDoc(adminRef, { passwordHash, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }, { merge: true });
+      adminLoggedIn = true;
+      adminHash = passwordHash;
+      saveSession({ loggedIn: true, passwordHash });
+      renderStatus();
+      showToast("Admin 密碼已建立");
+      return true;
+    }
+
+    function renderStatus(extra = {}) {
+      if (!adminLoggedIn) {
+        statusRow.innerHTML = `<span class="chip warn">尚未登入</span>`;
+        return;
+      }
+      statusRow.innerHTML = `
+        <span class="chip good">已登入 Admin</span>
+        <span class="chip">Project：premium-trip-planner-d5119</span>
+        ${extra.count !== undefined ? `<span class="chip">旅程：${extra.count}</span>` : ""}
+        ${extra.updated ? `<span class="chip">更新：${escapeHTML(extra.updated)}</span>` : ""}
+      `;
+    }
+
+    function firestoreTimeToText(value) {
+      try {
+        if (!value) return "未有紀錄";
+        const date = value.toDate ? value.toDate() : new Date(value);
+        if (Number.isNaN(date.getTime())) return "未有紀錄";
+        return date.toLocaleString("zh-HK", { hour12: false });
+      } catch {
+        return "未有紀錄";
+      }
+    }
+
+    function countEvents(days = []) {
+      return Array.isArray(days) ? days.reduce((sum, day) => sum + (Array.isArray(day.events) ? day.events.length : 0), 0) : 0;
+    }
+
+    async function fetchTrips() {
+      const snap = await getDocs(collection(db, "trips"));
+      return snap.docs.map(item => {
+        const data = item.data() || {};
+        const days = Array.isArray(data.days) ? data.days : [];
+        return {
+          id: item.id,
+          tripName: data.tripName || data.appName || "未命名旅程",
+          dayCount: days.length,
+          eventCount: countEvents(days),
+          updatedAt: data.updatedAt || data.createdAt || null,
+          createdAt: data.createdAt || null
+        };
+      }).sort((a, b) => {
+        const aTime = a.updatedAt && a.updatedAt.toMillis ? a.updatedAt.toMillis() : 0;
+        const bTime = b.updatedAt && b.updatedAt.toMillis ? b.updatedAt.toMillis() : 0;
+        return bTime - aTime;
+      });
+    }
+
+    async function renderTrips() {
+      const ok = await ensureAdminLogin();
+      if (!ok) return;
+      document.body.classList.add("loading");
+      try {
+        const rows = await fetchTrips();
+        renderStatus({ count: rows.length, updated: new Date().toLocaleString("zh-HK", { hour12: false }) });
+        if (!rows.length) {
+          tripList.innerHTML = `<div class="empty">Firebase 內暫時沒有旅程。當有人使用「分享個人行程」後，這裡會出現 trips。</div>`;
+          return;
+        }
+        tripList.innerHTML = rows.map(row => `
+          <article class="trip-card">
+            <div class="trip-top">
+              <div>
+                <div class="trip-title">${escapeHTML(row.tripName)}</div>
+                <div class="meta">日子：${row.dayCount}　行程：${row.eventCount}<br>最近更新：${escapeHTML(firestoreTimeToText(row.updatedAt))}<br>建立時間：${escapeHTML(firestoreTimeToText(row.createdAt))}</div>
+              </div>
+              <button class="trip-id" type="button" data-copy="${escapeHTML(row.id)}">${escapeHTML(row.id)}</button>
+            </div>
+            <div class="actions">
+              <button class="btn" type="button" data-copy="${escapeHTML(row.id)}">複製 ID</button>
+              <button class="btn danger" type="button" data-delete="${escapeHTML(row.id)}" data-name="${escapeHTML(row.tripName)}">刪除 Firebase 旅程</button>
+            </div>
+          </article>
+        `).join("");
+      } catch (error) {
+        await showAlert(error && error.message ? error.message : String(error), "讀取 Firebase 失敗");
+      } finally {
+        document.body.classList.remove("loading");
+      }
+    }
+
+    async function copyText(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast("已複製");
+      } catch {
+        await showAlert(text, "請手動複製");
+      }
+    }
+
+    async function deleteTrip(id, name) {
+      const ok = await showConfirm(`即將刪除 Firebase 雲端旅程：\n${name}\n\nID：${id}\n\n此動作會影響所有使用這個 ID 的人。`, "確認刪除", true);
+      if (!ok) return;
+      const typed = await showPrompt("再次確認", "請輸入 DELETE 才會真正刪除。", { placeholder: "DELETE", okLabel: "刪除", danger: true });
+      if (typed !== "DELETE") {
+        showToast("已取消刪除");
+        return;
+      }
+      await deleteDoc(doc(db, "trips", id));
+      showToast("已刪除 Firebase 旅程");
+      await renderTrips();
+    }
+
+    $("#loginBtn").addEventListener("click", renderTrips);
+    $("#refreshBtn").addEventListener("click", renderTrips);
+    $("#logoutBtn").addEventListener("click", () => {
+      clearSession();
+      showToast("已登出 Admin");
+    });
+    tripList.addEventListener("click", event => {
+      const copyBtn = event.target.closest("[data-copy]");
+      const deleteBtn = event.target.closest("[data-delete]");
+      if (copyBtn) copyText(copyBtn.getAttribute("data-copy"));
+      if (deleteBtn) deleteTrip(deleteBtn.getAttribute("data-delete"), deleteBtn.getAttribute("data-name") || "未命名旅程");
+    });
+
+    const session = loadSession();
+    if (session.loggedIn) renderTrips();
+  </script>
+</body>
+</html>
