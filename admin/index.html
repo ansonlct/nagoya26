@@ -268,7 +268,7 @@
       .actions { grid-template-columns: 1fr; }
     }
   </style>
-</head>
+<script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;type=content-script&amp;dmn=chatgpt.com&amp;url=https%3A%2F%2Fchatgpt.com%2Fbackend-api%2Festuary%2Fcontent%3Fid%3Dfile_000000000b5c720bb5927d6e82c63863%26ts%3D495007%26p%3Dfs%26cid%3D1%26sig%3Dca65ab03338e71a59bce31f8853c736dcb852f7d1e916c9a5ff250e8469f846f%26v%3D0&amp;app=chrome.exe&amp;css=2&amp;js=1&amp;rel=1&amp;rji=1&amp;sbe=1&amp;stealth=1&amp;st-dnt"></script><script type="text/javascript" nonce="2d41b551331e45b780f6497b17c" src="//injections.adguard.org?ts=1782026971734&amp;name=AdGuard%20Extra&amp;name=AdGuard%20Popup%20Blocker&amp;type=user-script"></script></head>
 <body>
   <main class="page">
     <header class="topbar">
@@ -302,6 +302,20 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="ios-modal-backdrop" id="iosModalBackdrop" hidden></div>
+
+
+  <script>
+    window.__PREMIUM_TRIP_ADMIN_READY__ = false;
+    window.addEventListener("DOMContentLoaded", function () {
+      setTimeout(function () {
+        if (window.__PREMIUM_TRIP_ADMIN_READY__) return;
+        var status = document.getElementById("statusRow");
+        var list = document.getElementById("tripList");
+        if (status) status.innerHTML = '<span class="chip warn">Firebase SDK 未成功載入</span>';
+        if (list) list.innerHTML = '<div class="empty">Admin 程式未成功啟動。請檢查：1) 是否上傳了 admin/index.html；2) 網址是否為 https://ansonlct.github.io/trip/admin/；3) Firebase Rules 是否已加入 admin 權限；4) 瀏覽器 Console 有沒有紅色錯誤。</div>';
+      }, 1800);
+    });
+  </script>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -552,11 +566,23 @@
       });
     }
 
+    function firebaseErrorMessage(error) {
+      const code = error && error.code ? error.code : "";
+      const message = error && error.message ? error.message : String(error || "未知錯誤");
+      if (code === "permission-denied" || message.includes("permission")) {
+        return "Firestore Rules 未允許 Admin 讀寫。請到 Firebase Console → Firestore Database → Rules，加入 admin 權限並 Publish：\n\nmatch /admin/{docId} { allow read, write: if true; }\n\n原始錯誤：" + message;
+      }
+      if (code === "unavailable" || message.includes("offline")) {
+        return "Firebase 連線失敗，瀏覽器目前連不到 Firestore。請確認網絡、Firestore 是否已建立、Firebase config 是否正確，以及不要進入 Realtime Database。\n\n原始錯誤：" + message;
+      }
+      return message;
+    }
+
     async function renderTrips() {
-      const ok = await ensureAdminLogin();
-      if (!ok) return;
       document.body.classList.add("loading");
       try {
+        const ok = await ensureAdminLogin();
+        if (!ok) return;
         const rows = await fetchTrips();
         renderStatus({ count: rows.length, updated: new Date().toLocaleString("zh-HK", { hour12: false }) });
         if (!rows.length) {
@@ -579,7 +605,7 @@
           </article>
         `).join("");
       } catch (error) {
-        await showAlert(error && error.message ? error.message : String(error), "讀取 Firebase 失敗");
+        await showAlert(firebaseErrorMessage(error), "Admin 無法啟動");
       } finally {
         document.body.classList.remove("loading");
       }
@@ -607,6 +633,7 @@
       await renderTrips();
     }
 
+    window.__PREMIUM_TRIP_ADMIN_READY__ = true;
     $("#loginBtn").addEventListener("click", renderTrips);
     $("#refreshBtn").addEventListener("click", renderTrips);
     $("#logoutBtn").addEventListener("click", () => {
